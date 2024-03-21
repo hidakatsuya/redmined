@@ -1,6 +1,6 @@
 # Redmined
 
-A docked CLI providing Redmine development environment.
+A Dockerized CLI for provisioning Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
 
 ## Prerequisites
 
