@@ -2,8 +2,8 @@ ARG RUBY_VERSION=3.3.0
 
 FROM ruby:$RUBY_VERSION-slim
 
-RUN apt update && \
-    apt install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
       sudo \
       bzr git mercurial subversion \
       gsfonts \
@@ -13,8 +13,8 @@ RUN apt update && \
       default-libmysqlclient-dev libsqlite3-dev \
       ; \
     curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt install -y nodejs && \
-    apt clean && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*;
 
 WORKDIR /redmine
