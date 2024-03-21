@@ -12,7 +12,7 @@ A Dockerized CLI for provisioning Redmine development environment. Inspired by [
 Create the function to run the Redmine development environment. For example, copy and paste this into your .bash_aliases file.
 ```bash
 function redmined() {
-  local image_name="redmined"
+  local image_name="ghcr.io/hidakatsuya/redmined"
   local container_name="redmined-container"
   local bundle_volume_name="redmine-bundle-cache"
 
