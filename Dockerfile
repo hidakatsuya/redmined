@@ -17,21 +17,21 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*;
 
-WORKDIR /redmine
-
 ENV USER_NAME=developer
+RUN groupadd $USER_NAME && \
+    useradd -d /home/$USER_NAME -m -g $USER_NAME -s /bin/bash $USER_NAME
 
 # Allow general users to use sudo.
 RUN echo "$USER_NAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USER_NAME
-
-# Temporary allow general users to add users and groups. This will be reverted in the entrypoint.
-RUN chmod u+s /usr/sbin/useradd && chmod u+s /usr/sbin/groupadd
 
 RUN mkdir /bundle && chmod -R ugo+rw /bundle
 VOLUME /bundle
 ENV BUNDLE_PATH="/bundle"
 
 ENV BINDING="0.0.0.0"
+
+USER $USER_NAME
+WORKDIR /redmine
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

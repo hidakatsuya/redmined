@@ -1,18 +1,12 @@
 #!/bin/bash -e
 
-USER_ID=$(id -u)
-GROUP_ID=$(id -g)
-
-if [ "$GROUP_ID" != "0" ]; then
-  groupadd -g $GROUP_ID -o $USER_NAME
+if [ -n "$USER_ID" ]; then
+  sudo usermod -u $USER_ID $USER_NAME > /dev/null
 fi
 
-if [ "$USER_ID" != "0" ]; then
-  useradd -d /home/$USER_NAME -m -s /bin/bash -u $USER_ID -g $GROUP_ID $USER_NAME
+if [ -n "$GROUP_ID" ]; then
+  sudo groupmod -g $GROUP_ID $USER_NAME > /dev/null
 fi
-
-sudo chmod u-s /usr/sbin/useradd
-sudo chmod u-s /usr/sbin/groupadd
 
 exec $@
 

@@ -25,7 +25,7 @@ function redmined() {
   # Run the container if it's not running, otherwise exec into it.
   if [ ! $(docker ps -q --filter name=$container_name) ]; then
     docker run --name $container_name --rm -it \
-      -u $(id -u):$(id -g) \
+      -e USER_ID=$(id -u) -e GROUP_ID=$(id -g) \
       -v ${PWD}:/redmine -v $bundle_volume_name:/bundle \
       -p 3000:3000 $image_name $@
   else
