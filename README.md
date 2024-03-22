@@ -19,7 +19,6 @@ Define the `redmined` command with the following code.
 function redmined() {
   local container_name="redmined-container"
 
-  # Run the container if it's not running, otherwise exec into it.
   if [ ! $(docker ps -q --filter name=$container_name) ]; then
     docker run --name $container_name --rm -it \
       -e USER_ID=$(id -u) -e GROUP_ID=$(id -g) \
@@ -37,7 +36,7 @@ function redmined() {
 cd your-redmine-root-directory
 ```
 
-Add settings for SQLite database.
+Create configuration for SQLite database.
 ```shell
 cat <<EOS > config/database.yml
 development:
