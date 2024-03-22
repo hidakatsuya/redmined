@@ -4,12 +4,13 @@ A Dockerized CLI for provisioning Redmine development environment. Inspired by [
 
 ## Prerequisites
 
-* Source code of [Readmine](https://github.com/redmine/redmine) or its distribution such as [RedMica](https://github.com/redmica/redmica)
+* Source code of [Redmine](https://github.com/redmine/redmine) or its distribution such as [RedMica](https://github.com/redmica/redmica)
 * Docker
 
 ## Installation
 
-Create the function to run the Redmine development environment. For example, copy and paste this into your .bash_aliases file.
+Define the `redmined` command with the following code:
+
 ```bash
 function redmined() {
   local image_name="ghcr.io/hidakatsuya/redmined"
