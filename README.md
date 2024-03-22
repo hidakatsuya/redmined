@@ -1,6 +1,6 @@
 # Redmined
 
-A Dockerized CLI for provisioning Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
+A Docked CLI for Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
 
 ## Prerequisites
 
@@ -9,25 +9,22 @@ A Dockerized CLI for provisioning Redmine development environment. Inspired by [
 
 ## Installation
 
-Define the `redmined` command with the following code:
+Create a Docker volume for the bundle cache.
+```shell
+docker volume create redmine-bundle-cache
+```
 
+Define the `redmined` command with the following code.
 ```bash
 function redmined() {
-  local image_name="ghcr.io/hidakatsuya/redmined"
   local container_name="redmined-container"
-  local bundle_volume_name="redmine-bundle-cache"
-
-  # Create a Docker volume for the bundle cache if it doesn't exist.
-  if [ ! $(docker volume ls -q -f name=$bundle_volume_name) ]; then
-    docker volume create $bundle_volume_name > /dev/null
-  fi
 
   # Run the container if it's not running, otherwise exec into it.
   if [ ! $(docker ps -q --filter name=$container_name) ]; then
     docker run --name $container_name --rm -it \
       -e USER_ID=$(id -u) -e GROUP_ID=$(id -g) \
-      -v ${PWD}:/redmine -v $bundle_volume_name:/bundle \
-      -p 3000:3000 $image_name $@
+      -v ${PWD}:/redmine -v redmine-bundle-cache:/bundle \
+      -p 3000:3000 ghcr.io/hidakatsuya/redmined $@
   else
     docker exec -it $container_name $@
   fi
@@ -36,9 +33,25 @@ function redmined() {
 
 ## Usage
 
-```
+```shell
 cd your-redmine-root-directory
+```
 
-redmined bin/rails db:migrate
+Add settings for SQLite database.
+```shell
+cat <<EOS > config/database.yml
+development:
+  adapter: sqlite3
+  database: db/development.sqlite3
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+EOS
+```
+
+```shell
+redmined bundle install
+redmined bin/rails db:prepare
 redmined bin/rails s
 ```
+
