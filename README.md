@@ -54,3 +54,10 @@ redmined bin/rails db:prepare
 redmined bin/rails s
 ```
 
+## Tips
+
+### How to execute redmined command with modified environment variables
+
+```shell
+redmined env RAILS_ENV=development bin/about
+```
