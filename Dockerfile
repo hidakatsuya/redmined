@@ -11,6 +11,7 @@ RUN set -eux; \
           gsfonts \
           imagemagick libmagick++-dev \
           libsqlite3-dev \
+          libnss3-dev \
     ; \
     # Allow ImageMagick to read PDFs
     sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
@@ -20,7 +21,11 @@ RUN set -eux; \
     apt-get install -y nodejs && \
     npm install -g yarn; \
     \
-    rm -rf /var/lib/apt/lists/*
+    # Install Google Chrome for system test
+    curl -fsSL "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -o /tmp/google-chrome-stable.deb && \
+    apt-get install -y /tmp/google-chrome-stable.deb; \
+    \
+    rm /tmp/google-chrome-stable.deb && rm -rf /var/lib/apt/lists/*
 
 # Add a user to run and develop the application.
 # In the entrypoint.sh, the UID and GID of this developer user will be set to the same as the host user.
@@ -39,6 +44,9 @@ ENV BINDING="0.0.0.0"
 
 USER $USER_NAME
 WORKDIR /redmine
+
+# Configure Google Chrome for system test
+ENV GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage"
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
