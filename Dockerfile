@@ -2,21 +2,28 @@ ARG RUBY_VERSION=3.3.0
 
 FROM ruby:$RUBY_VERSION-slim
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      sudo \
-      bzr git mercurial subversion \
-      gsfonts \
-      imagemagick libmagick++-dev \
-      build-essential libpq-dev libclang-dev \
-      vim less locales locales-all \
-      default-libmysqlclient-dev libsqlite3-dev \
-      ; \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+RUN set -eux; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+          sudo build-essential curl wget vim \
+          bzr git mercurial subversion cvs \
+          ghostscript \
+          gsfonts \
+          imagemagick libmagick++-dev \
+          libsqlite3-dev \
+    ; \
+    # Allow ImageMagick to read PDFs
+    sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
+    \
+    # Install Node.js and yarn
+    curl -fsSL https://deb.nodesource.com/setup_21.x | bash - && \
     apt-get install -y nodejs && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*;
+    npm install -g yarn; \
+    \
+    rm -rf /var/lib/apt/lists/*
 
+# Add a user to run and develop the application.
+# In the entrypoint.sh, the UID and GID of this developer user will be set to the same as the host user.
 ENV USER_NAME=developer
 RUN groupadd $USER_NAME && \
     useradd -d /home/$USER_NAME -m -g $USER_NAME -s /bin/bash $USER_NAME
