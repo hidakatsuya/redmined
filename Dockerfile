@@ -22,7 +22,7 @@ RUN set -eux; \
     npm install -g yarn; \
     \
     # Install Google Chrome for system test
-    curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/google-chrome-stable.deb && \
+    curl -fsSL -o /tmp/google-chrome-stable.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get install -y /tmp/google-chrome-stable.deb; \
     \
     rm /tmp/google-chrome-stable.deb && rm -rf /var/lib/apt/lists/*
