@@ -22,10 +22,11 @@ RUN set -eux; \
     npm install -g yarn; \
     \
     # Install Google Chrome for system test
-    curl -fsSL -o /tmp/google-chrome-stable.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y /tmp/google-chrome-stable.deb; \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && apt-get install -y google-chrome-stable; \
     \
-    rm /tmp/google-chrome-stable.deb && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 # Add a user to run and develop the application.
 # In the entrypoint.sh, the UID and GID of this developer user will be set to the same as the host user.
