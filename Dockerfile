@@ -2,6 +2,8 @@ ARG RUBY_VERSION=3.3.0
 
 FROM ruby:$RUBY_VERSION-slim
 
+ARG TARGETPLATFORM
+
 RUN set -eux; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
@@ -21,12 +23,17 @@ RUN set -eux; \
     apt-get install -y nodejs && \
     npm install -g yarn; \
     \
-    # Install Google Chrome for system test
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable; \
-    \
     rm -rf /var/lib/apt/lists/*
+
+# Install Google Chrome for system test when the target platform is amd64
+RUN set -eux; \
+    if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+      echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+      apt-get update && apt-get install -y google-chrome-stable; \
+      \
+      rm -rf /var/lib/apt/lists/*; \
+    fi;
 
 # Add a user to run and develop the application.
 # In the entrypoint.sh, the UID and GID of this developer user will be set to the same as the host user.
