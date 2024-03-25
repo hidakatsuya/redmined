@@ -37,6 +37,7 @@ cd your-redmine-root-directory
 ```
 
 Create configuration for SQLite database.
+
 ```shell
 cat <<EOS > config/database.yml
 development:
@@ -48,11 +49,23 @@ test:
 EOS
 ```
 
+Setup and start Redmine.
+
 ```shell
 redmined bundle install
 redmined bin/rails db:prepare
 redmined bin/rails s
 ```
+
+Run tests.
+
+```
+redmined bin/rails test
+redmined bin/rails test:system
+```
+
+> [!NOTE]
+> Since Chrome is not installed on the ARM64 platform, `test:system` task can't be executed.
 
 ## Tips
 
