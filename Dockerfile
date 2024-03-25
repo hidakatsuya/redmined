@@ -20,7 +20,7 @@ RUN set -eux; \
     \
     # Install Node.js and yarn
     curl -fsSL https://deb.nodesource.com/setup_21.x | bash - && \
-    apt-get install -y nodejs && \
+    apt-get install -y --no-install-recommends nodejs && \
     npm install -g yarn; \
     \
     rm -rf /var/lib/apt/lists/*
@@ -30,7 +30,7 @@ RUN set -eux; \
     if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
       wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-      apt-get update && apt-get install -y google-chrome-stable; \
+      apt-get update && apt-get install -y --no-install-recommends google-chrome-stable; \
       \
       rm -rf /var/lib/apt/lists/*; \
     fi;
