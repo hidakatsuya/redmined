@@ -8,5 +8,5 @@ if [ -n "$GROUP_ID" ]; then
   sudo groupmod -g $GROUP_ID $USER_NAME > /dev/null
 fi
 
-exec $@
+exec setpriv --reuid=$USER_ID --regid=$GROUP_ID --init-groups --reset-env "$@"
 

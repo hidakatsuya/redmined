@@ -42,7 +42,6 @@ ENV BUNDLE_PATH="/bundle"
 
 ENV BINDING="0.0.0.0"
 
-USER $USER_NAME
 WORKDIR /redmine
 
 # Configure Google Chrome for system test
