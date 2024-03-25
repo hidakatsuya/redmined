@@ -69,7 +69,7 @@ redmined bin/rails test:system
 
 ## Tips
 
-### How to execute redmined command with modified environment variables
+### Executing redmined command with modified environment variables
 
 ```shell
 redmined env RAILS_ENV=development bin/about
