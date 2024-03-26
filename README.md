@@ -10,25 +10,33 @@ A docked CLI for Redmine development environment. Inspired by [rails/docked](htt
 ## Installation
 
 Create a Docker volume for the bundle cache.
+
 ```shell
 docker volume create redmine-bundle-cache
 ```
 
 Define the `redmined` command with the following code.
+
 ```bash
 function redmined() {
   local container_name="redmined-container"
 
   if [ ! $(docker ps -q --filter name=$container_name) ]; then
     docker run --name $container_name --rm -it \
-      -e USER_ID=$(id -u) -e GROUP_ID=$(id -g) \
       -v ${PWD}:/redmine -v redmine-bundle-cache:/bundle \
-      -p 3000:3000 ghcr.io/hidakatsuya/redmined $@
+      -p 3000:3000 ghcr.io/hidakatsuya/redmined "$@"
   else
-    docker exec -it $container_name $@
+    docker exec -it $container_name "$@"
   fi
 }
 ```
+
+> [!NOTE]
+> If you need to run a Docker container with the same user as the host,
+> add the following environment variables to the `docker run` command:
+> ```
+> -e USER_ID=$(id -u) -e GROUP_ID=$(id -g)
+> ```
 
 ## Usage
 
