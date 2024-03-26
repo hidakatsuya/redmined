@@ -32,11 +32,18 @@ function redmined() {
 ```
 
 > [!NOTE]
-> If you need to run a Docker container with the same user as the host,
-> add the following environment variables to the `docker run` command:
-> ```
-> -e USER_ID=$(id -u) -e GROUP_ID=$(id -g)
-> ```
+> If you need to run the Docker container with the same user as the host, specify the user and group as follows:
+```diff
+if [ ! $(docker ps -q --filter name=$container_name) ]; then
+  docker run --name $container_name --rm -it \
++   -e USER_ID=$(id -u) -e GROUP_ID=$(id -g)
+    -v ${PWD}:/redmine -v redmine-bundle-cache:/bundle \
+    -p 3000:3000 ghcr.io/hidakatsuya/redmined "$@"
+else
+-  docker exec -it $container_name "$@"
++  docker exec -it -u $(id -u):$(id -g) $container_name "$@"
+fi
+```
 
 ## Usage
 
