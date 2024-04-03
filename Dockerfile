@@ -48,9 +48,10 @@ RUN mkdir /bundle && chmod -R ugo+rw /bundle
 VOLUME /bundle
 ENV BUNDLE_PATH="/bundle"
 
-ENV BINDING="0.0.0.0"
-
 WORKDIR /redmine
+
+ENV BINDING="0.0.0.0"
+ENV EDITOR="vim"
 
 # Configure Google Chrome for system test
 ENV GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage"
