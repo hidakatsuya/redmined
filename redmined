@@ -1,0 +1,54 @@
+#!/bin/sh
+
+set -euC
+
+readonly CONTAINER_NAME="redmined-container"
+
+# Whearther run as host user.
+# Run as host user if REDMINED_RUN_AS_HOST_USER is set, otherwise run as container user.
+readonly RUN_AS_HOST_USER=${REDMINED_RUN_AS_HOST_USER:-""}
+
+# Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
+readonly BUNDLE_CACHE_VOLUME=${REDMINED_BUNDLE_CACHE_VOLUME:-"redmine-bundle-cache"}
+
+# Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
+readonly IMAGE=${REDMINED_IMAGE:-"ghcr.io/hidakatsuya/redmined"}
+
+docker_run() {
+  local user_option=""
+
+  if [ -n "$RUN_AS_HOST_USER" ]; then
+    user_option="-e USER_ID=$(id -u) -e GOUP_ID=$(id -g)"
+  fi
+
+  docker run --name $CONTAINER_NAME --rm -it \
+     $user_option \
+    -v ${PWD}:/redmine -v $BUNDLE_CACHE_VOLUME:/bundle \
+    -p 3000:3000 $IMAGE "$@"
+}
+
+docker_exec() {
+  local user_option=""
+
+  if [ -n "$RUN_AS_HOST_USER" ]; then
+    user_option="--user $(id -u):$(id -g)"
+  fi
+
+  docker exec -it $user_option $CONTAINER_NAME "$@"
+}
+
+container_running() {
+  docker ps -q --filter name=$CONTAINER_NAME
+}
+
+main() {
+  if [ ! $(container_running) ]; then
+    docker_run "$@"
+  else
+    docker_exec "$@"
+  fi
+}
+
+
+main "$@"
+
