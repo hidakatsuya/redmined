@@ -4,8 +4,7 @@ set -euC
 
 readonly CONTAINER_NAME="redmined-container"
 
-# Whearther run as host user.
-# Run as host user if REDMINED_RUN_AS_HOST_USER is set, otherwise run as container user.
+# Whearther run as host user. Run as host user if set, otherwise run as container user.
 readonly RUN_AS_HOST_USER=${REDMINED_RUN_AS_HOST_USER:-""}
 
 # Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
