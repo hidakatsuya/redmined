@@ -15,34 +15,12 @@ Create a Docker volume for the bundle cache.
 docker volume create redmine-bundle-cache
 ```
 
-Define the `redmined` command with the following code.
+Download [redmined](./redmined) and place it in a location in your PATH, such as `~/.local/bin/`, and grant execution permission.
 
-```bash
-function redmined() {
-  local container_name="redmined-container"
+If `curl` is available, you can also install it with the following command.
 
-  if [ ! $(docker ps -q --filter name=$container_name) ]; then
-    docker run --name $container_name --rm -it \
-      -v ${PWD}:/redmine -v redmine-bundle-cache:/bundle \
-      -p 3000:3000 ghcr.io/hidakatsuya/redmined "$@"
-  else
-    docker exec -it $container_name "$@"
-  fi
-}
-```
-
-> [!NOTE]
-> If you need to run the Docker container with the same user as the host, specify the user and group as follows:
-```diff
-if [ ! $(docker ps -q --filter name=$container_name) ]; then
-  docker run --name $container_name --rm -it \
-+   -e USER_ID=$(id -u) -e GROUP_ID=$(id -g)
-    -v ${PWD}:/redmine -v redmine-bundle-cache:/bundle \
-    -p 3000:3000 ghcr.io/hidakatsuya/redmined "$@"
-else
--  docker exec -it $container_name "$@"
-+  docker exec -it -u $(id -u):$(id -g) $container_name "$@"
-fi
+```shell
+curl https://raw.githubusercontent.com/hidakatsuya/redmined/main/redmined -o ~/.local/bin/redmined && chmod +x $_
 ```
 
 ## Usage
@@ -74,13 +52,21 @@ redmined bin/rails s
 
 Run tests.
 
-```
+```shell
 redmined bin/rails test
 redmined bin/rails test:system
 ```
 
 > [!NOTE]
 > Since Chrome is not installed on the ARM64 platform, `test:system` task can't be executed.
+
+## Settings
+
+* `REDMINED_RUN_AS_HOST_USER` Run as host user if REDMINED_RUN_AS_HOST_USER is set, otherwise run as container user.
+* `REDMINED_BUNDLE_CACHE_VOLUME` Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
+* `REDMINED_IMAGE` Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
+
+See [redmined](https://github.com/hidakatsuya/redmined/blob/main/redmined) for further details.
 
 ## Tips
 
