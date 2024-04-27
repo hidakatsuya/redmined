@@ -1,0 +1,38 @@
+name: Test
+description: Test the image
+
+runs:
+  using: composite
+
+  steps:
+    - uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        tags: redmined:test
+
+    - uses: actions/checkout@v4
+      with:
+        repository: redmine/redmine
+        ref: master
+        path: redmine-src
+
+    - run: |
+        docker volume create redmine-bundle-cache
+
+        cd redmine-src
+
+        cat <<EOS > config/database.yml
+        development:
+          adapter: sqlite3
+          database: db/development.sqlite3
+        EOS
+
+        docker run --rm \
+          -v ${PWD}:/redmine \
+          -v redmine-bundle-cache:/bundle \
+          -u root:root --entrypoint "" \
+          redmined:test \
+          bash -c "bundle install && bin/rails db:prepare && RAILS_ENV=development bin/about"
+      shell: bash
+
