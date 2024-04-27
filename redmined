@@ -21,7 +21,7 @@ docker_run() {
   local user_option=""
 
   if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
-    user_option="-e USER_ID=$(id -u) -e GOUP_ID=$(id -g)"
+    user_option="-e USER_ID=$(id -u) -e GROUP_ID=$(id -g)"
   fi
 
   docker run --name $CONTAINER_NAME --rm -it \
