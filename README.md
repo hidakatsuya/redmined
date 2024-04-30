@@ -98,8 +98,8 @@ docker volume create redmine-bundle-cache
 direnv allow .
 
 cat <<EOF > .envrc
-REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.3
-REDMINED_BUNDLE_CACHE_VOLUME=redmica-bundle-cache
+export REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.3
+export REDMINED_BUNDLE_CACHE_VOLUME=redmine-bundle-cache
 EOF
 ```
 
@@ -111,8 +111,8 @@ docker volume create redmica-bundle-cache
 direnv allow .
 
 cat <<EOF > .envrc
-REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.2
-REDMINED_BUNDLE_CACHE_VOLUME=redmica-bundle-cache
+export REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.2
+export REDMINED_BUNDLE_CACHE_VOLUME=redmica-bundle-cache
 EOF
 ```
 
