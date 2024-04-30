@@ -62,7 +62,7 @@ redmined bin/rails test:system
 
 ## Settings
 
-* `REDMINED_MAP_HOST_USER_TO_CONTAINER_USER` Map the UID and GID of the host user to the container user 
+* `REDMINED_MAP_HOST_USER_TO_CONTAINER_USER` Map the UID and GID of the host user to the container user
 * `REDMINED_BUNDLE_CACHE_VOLUME` Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
 * `REDMINED_IMAGE` Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
 * `REDMINED_PUBLISH_PORT` Port mapping for Redmine. If not set, use "3000:3000" as default.
@@ -76,3 +76,44 @@ See [redmined](https://github.com/hidakatsuya/redmined/blob/main/redmined) for f
 ```shell
 redmined env RAILS_ENV=development bin/about
 ```
+
+### Using separate environments for multiple Redmines
+
+This section introduces how to develop in multiple Redmine environments using the environment variables of Redmined and [direnv](https://github.com/direnv/direnv).
+
+As an example, consider an environment where Redmine is developed with Ruby 3.3 and RedMica with Ruby 3.2.
+
+First, prepare the source code for Redmine and RedMica.
+```
+/home/you/
+  ├── redmica/
+  └── redmine/
+```
+
+Move to the `redmine/` directory and execute the following commands.
+```shell
+cd ~/redmine/
+
+docker volume create redmine-bundle-cache
+direnv allow .
+
+cat <<EOF > .envrc
+REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.3
+REDMINED_BUNDLE_CACHE_VOLUME=redmica-bundle-cache
+EOF
+```
+
+Next, move to the `redmica/` directory and execute the following commands.
+```shell
+cd ~/redmica/
+
+docker volume create redmica-bundle-cache
+direnv allow .
+
+cat <<EOF > .envrc
+REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.2
+REDMINED_BUNDLE_CACHE_VOLUME=redmica-bundle-cache
+EOF
+```
+
+That's it. It would be a good idea to add `.envrc` to gitignore.
