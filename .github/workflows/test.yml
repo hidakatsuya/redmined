@@ -6,7 +6,6 @@ on:
       - dev/**
     paths-ignore:
       - '**.md'
-      - 'redmined'
   pull_request:
   workflow_dispatch:
 
