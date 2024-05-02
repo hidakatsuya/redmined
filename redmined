@@ -2,7 +2,8 @@
 
 set -euC
 
-readonly CONTAINER_NAME="redmined-container"
+# Container name for redmined. If not set, use "redmined-container" as default.
+readonly CONTAINER_NAME=${REDMINED_CONTAINER_NAME:-"redmined-container"}
 
 # Whether to map the UID and GID of the host user to the container user. If not set, do not map.
 readonly MAP_HOST_USER_TO_CONTAINER_USER=${REDMINED_MAP_HOST_USER_TO_CONTAINER_USER:-""}

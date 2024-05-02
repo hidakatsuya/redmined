@@ -62,6 +62,7 @@ redmined bin/rails test:system
 
 ## Settings
 
+* `REDMINED_CONTAINER_NAME` Container name for redmined. If not set, use "redmined-container" as default.
 * `REDMINED_MAP_HOST_USER_TO_CONTAINER_USER` Map the UID and GID of the host user to the container user
 * `REDMINED_BUNDLE_CACHE_VOLUME` Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
 * `REDMINED_IMAGE` Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
