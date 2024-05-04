@@ -93,28 +93,26 @@ First, prepare the source code for Redmine and RedMica.
 
 Move to the `redmine/` directory and execute the following commands.
 ```shell
-cd ~/redmine/
-
 docker volume create redmine-bundle-cache
-direnv allow .
 
 cat <<EOF > .envrc
 export REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.3
 export REDMINED_BUNDLE_CACHE_VOLUME=redmine-bundle-cache
 EOF
+
+direnv allow .
 ```
 
 Next, move to the `redmica/` directory and execute the following commands.
 ```shell
-cd ~/redmica/
-
 docker volume create redmica-bundle-cache
-direnv allow .
 
 cat <<EOF > .envrc
 export REDMINED_IMAGE=ghcr.io/hidakatsuya/redmined:ruby3.2
 export REDMINED_BUNDLE_CACHE_VOLUME=redmica-bundle-cache
 EOF
+
+direnv allow .
 ```
 
 That's it. It would be a good idea to add `.envrc` to gitignore.
