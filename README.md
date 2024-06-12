@@ -2,6 +2,13 @@
 
 A docked CLI for Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
 
+## Features
+
+* Requires only Docker CLI
+* Supports running most Redmine tests
+* CLI can be executed in subdirectories
+* Supports multiple Redmine development environments
+
 ## Prerequisites
 
 * Source code of [Redmine](https://github.com/redmine/redmine) or its distribution such as [RedMica](https://github.com/redmica/redmica)
@@ -76,6 +83,36 @@ See [redmined](https://github.com/hidakatsuya/redmined/blob/main/redmined) for f
 
 ```shell
 redmined env RAILS_ENV=development bin/about
+```
+
+### Developing a Redmine plugin with Redmined CLI
+
+Since Redmined CLI supports running in subdirectories, you can run `redmined` in `plugins/redmine_xxxx/`.
+
+This means you can develop a Redmine plugin in the following way.
+
+Suppose your Redmine source code is stored as follow:
+```
+/home/you/redmine
+  ├── app/
+  ├── plugins/
+  :
+```
+
+The, place your Redmine plugin in `plugins/redmine_your_plugin` and go to that directory.
+
+```shell
+cd plugins/redmine_your_plugin
+```
+
+You can run commands such as `bin/rails s` or `bin/rails redmine:plugins:test` under the plugins directory. You don't need to navigate to the Redmine root directory to run those commands.
+
+```shell
+pwd
+/path/to/redmine/plugins/redmine_your_plugin
+
+redmined bin/rails redmine:plugins:test
+redmined bin/rails s
 ```
 
 ### Using separate environments for multiple Redmines
