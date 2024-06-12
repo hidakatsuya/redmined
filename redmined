@@ -47,14 +47,25 @@ container_running() {
   docker ps -q --filter name=$CONTAINER_NAME
 }
 
+cd_redmine_root() {
+  current_dir=$(pwd)
+
+  while [ ! -f "Rakefile" ]; do
+    cd ..
+    if [ "$(pwd)" = "$current_dir" ]; then
+      echo "No Redmine root directory found"
+      exit 1
+    fi
+    current_dir=$(pwd)
+  done
+}
+
 main() {
   if [ ! $(container_running) ]; then
-    docker_run "$@"
+    (cd_redmine_root && docker_run "$@")
   else
-    docker_exec "$@"
+    (cd_redmine_root && docker_exec "$@")
   fi
 }
 
-
 main "$@"
-
