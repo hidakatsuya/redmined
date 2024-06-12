@@ -99,7 +99,7 @@ Suppose your Redmine source code is stored as follow:
   :
 ```
 
-The, place your Redmine plugin in `plugins/redmine_your_plugin` and go to that directory.
+Then, place your Redmine plugin in `plugins/redmine_your_plugin` and go to that directory.
 
 ```shell
 cd plugins/redmine_your_plugin
