@@ -3,20 +3,47 @@
 set -euC
 
 # Container name for redmined. If not set, use "redmined-container" as default.
-readonly CONTAINER_NAME=${REDMINED_CONTAINER_NAME:-"redmined-container"}
+CONTAINER_NAME=${REDMINED_CONTAINER_NAME:-"redmined-container"}
 
 # Whether to map the UID and GID of the host user to the container user. If not set, do not map.
-readonly MAP_HOST_USER_TO_CONTAINER_USER=${REDMINED_MAP_HOST_USER_TO_CONTAINER_USER:-""}
+MAP_HOST_USER_TO_CONTAINER_USER=${REDMINED_MAP_HOST_USER_TO_CONTAINER_USER:-""}
 
 # Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
-readonly BUNDLE_CACHE_VOLUME=${REDMINED_BUNDLE_CACHE_VOLUME:-"redmine-bundle-cache"}
+BUNDLE_CACHE_VOLUME=${REDMINED_BUNDLE_CACHE_VOLUME:-"redmine-bundle-cache"}
 
 # Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
-readonly IMAGE=${REDMINED_IMAGE:-"ghcr.io/hidakatsuya/redmined"}
+IMAGE=${REDMINED_IMAGE:-"ghcr.io/hidakatsuya/redmined"}
 
-# Port mapping for Redmine. If not set, use "3000:3000" as default.
-readonly PUBLISH_PORT=${REDMINED_PUBLISH_PORT:-"3000:3000"}
+# Port number for Redmine. If not set, use "3000" as default.
+REDMINE_PORT=${REDMINED_REDMINE_PORT:-"3000"}
 
+# Port number for publishing container port to host. If not set, use "$REDMINE_PORT:$REDMINE_PORT" as default.
+PUBLISH_PORT=${REDMINED_PUBLISH_PORT:-""}
+
+# Environment variables passed to the container. Multiple variables should be separated by space. If not set, use "" as default.
+CONTAINER_ENVS=${REDMINED_CONTAINER_ENVS:-""}
+
+# Configuration file for redmined
+CONFIG_FILE=${REDMINED_CONFIG_FILE:-".redmined.json"}
+
+
+exit_with_usage() {
+    cat <<EOS 1>&2
+Usage: redmined [options] [command]
+
+Command:
+  Commands to run in the container
+
+Options:
+  -n NAME  Specify the configuration name to load from the configuration file
+
+Examples:
+  redmined bundle install
+  redmined bash
+  redmined bin/rails server
+EOS
+    exit 0
+}
 
 docker_run() {
     local user_option=""
@@ -29,7 +56,8 @@ docker_run() {
        $user_option \
       -v ${PWD}:/redmine \
       -v $BUNDLE_CACHE_VOLUME:/bundle \
-      -p $PUBLISH_PORT \
+      -p ${PUBLISH_PORT:-"$REDMINE_PORT:$REDMINE_PORT"} \
+      -e PORT=$REDMINE_PORT \
       $IMAGE "$@"
 }
 
@@ -60,12 +88,72 @@ cd_redmine_root() {
     done
 }
 
-main() {
-    if [ ! $(container_running) ]; then
-      (cd_redmine_root && docker_run "$@")
-    else
-      (cd_redmine_root && docker_exec "$@")
+load_config() {
+    target="${1:-"default"}"
+
+    if [ ! -e $CONFIG_FILE ]; then
+        return 0
     fi
+
+    if ! command -v jq > /dev/null; then
+        echo "[WARNING] Skipped loading configuration file because jq is not installed. Please install jq."
+        return 0
+    fi
+
+    local name=$(jq -r --arg t $target '.[$t].name // ""' $CONFIG_FILE)
+    if [ -n "$name" ]; then
+        CONTAINER_NAME="redmined-container-$name"
+        BUNDLE_CACHE_VOLUME="redmined-bundle-cache-$name"
+    fi
+
+    local ruby_version=$(jq -r --arg t $target '.[$t].ruby_version // ""' $CONFIG_FILE)
+    if [ -n "$ruby_version" ]; then
+        IMAGE="$IMAGE:ruby$ruby_version"
+    fi
+
+    local env=$(jq -r --arg t $target '.[$t].env // {} | to_entries | map("\(.key)=\(.value)") | join(" ")' $CONFIG_FILE)
+    if [ -n "$env" ]; then
+        CONTAINER_ENVS="$env"
+    fi
+
+    local port=$(jq -r --arg t $target '.[$t].port // ""' $CONFIG_FILE)
+    if [ -n "$port" ]; then
+        REDMINE_PORT="$port"
+    fi
+}
+
+main() {
+    if [ "$#" -eq 0 ]; then
+        exit_with_usage
+    fi
+
+    (
+        cd_redmine_root
+
+        local config_name=""
+        while getopts ":n:" opt; do
+            case $opt in
+                n)    config_name=$OPTARG;;
+                \?|:) exit_with_usage;;
+            esac
+        done
+        # Remove options from arguments
+        shift $((OPTIND - 1))
+
+        load_config $config_name
+
+        local envs=""
+        if [ -n "$CONTAINER_ENVS" ]; then
+            envs="env $CONTAINER_ENVS "
+        fi
+
+        local container_command=$envs$@
+        if [ ! $(container_running) ]; then
+            docker_run $container_command
+        else
+            docker_exec $container_command
+        fi
+    )
 }
 
 main "$@"
