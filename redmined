@@ -19,53 +19,53 @@ readonly PUBLISH_PORT=${REDMINED_PUBLISH_PORT:-"3000:3000"}
 
 
 docker_run() {
-  local user_option=""
+    local user_option=""
 
-  if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
-    user_option="-e USER_ID=$(id -u) -e GROUP_ID=$(id -g)"
-  fi
+    if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
+      user_option="-e USER_ID=$(id -u) -e GROUP_ID=$(id -g)"
+    fi
 
-  docker run --name $CONTAINER_NAME --rm -it \
-     $user_option \
-    -v ${PWD}:/redmine \
-    -v $BUNDLE_CACHE_VOLUME:/bundle \
-    -p $PUBLISH_PORT \
-    $IMAGE "$@"
+    docker run --name $CONTAINER_NAME --rm -it \
+       $user_option \
+      -v ${PWD}:/redmine \
+      -v $BUNDLE_CACHE_VOLUME:/bundle \
+      -p $PUBLISH_PORT \
+      $IMAGE "$@"
 }
 
 docker_exec() {
-  local user_option=""
+    local user_option=""
 
-  if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
-    user_option="--user $(id -u):$(id -g)"
-  fi
+    if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
+      user_option="--user $(id -u):$(id -g)"
+    fi
 
-  docker exec -it $user_option $CONTAINER_NAME "$@"
+    docker exec -it $user_option $CONTAINER_NAME "$@"
 }
 
 container_running() {
-  docker ps -q --filter name=$CONTAINER_NAME
+    docker ps -q --filter name=$CONTAINER_NAME
 }
 
 cd_redmine_root() {
-  current_dir=$(pwd)
-
-  while [ ! -f "Rakefile" ]; do
-    cd ..
-    if [ "$(pwd)" = "$current_dir" ]; then
-      echo "No Redmine root directory found"
-      exit 1
-    fi
     current_dir=$(pwd)
-  done
+
+    while [ ! -f "Rakefile" ]; do
+      cd ..
+      if [ "$(pwd)" = "$current_dir" ]; then
+        echo "No Redmine root directory found"
+        exit 1
+      fi
+      current_dir=$(pwd)
+    done
 }
 
 main() {
-  if [ ! $(container_running) ]; then
-    (cd_redmine_root && docker_run "$@")
-  else
-    (cd_redmine_root && docker_exec "$@")
-  fi
+    if [ ! $(container_running) ]; then
+      (cd_redmine_root && docker_run "$@")
+    else
+      (cd_redmine_root && docker_exec "$@")
+    fi
 }
 
 main "$@"
