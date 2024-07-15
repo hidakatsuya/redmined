@@ -100,12 +100,16 @@ You can create the configuration file named `.redmined.json` for different Redmi
 
 Then, you can use Redmine in the above environment by executing the command as usual. The details of the configuration are as follows:
 
-* `name`: This name determines to the following settings
+* `name`: It determines to the following settings
   * `REDMINED_BUNDLE_CACHE_VOLUME` -> `redmined-<name>-bundle-cache`
   * `REDMINED_CONTAINER_NAME` -> `redmined-<name>-container`
-* `ruby_version`: This version determines the container image redmined uses `REDMINED_IMAGE`:ruby<ruby-version>`.
-* `port`: This port determines the `--expose` settings of `docker run` and `$PORT` which `rails server` respects
-* `env`: This object determines the environment variables for the container
+* `ruby_version`: It determines the container image redmined uses
+  * `REDMINED_IMAGE` -> `REDMINED_IMAGE:ruby<ruby_version>`.
+* `port`: It determines the `--expose` settings of `docker run` and `$PORT` which `rails server` respects
+  * `REDMINED_REDMINE_PORT` -> `<port>`
+  * `REDMINED_PUBLISH_PORT` -> `<port>:<port>`
+* `env`: It determines additional environment variables for the redmined container
+  * `REDMINED_CONTAINER_ENVS` -> `<env>` values
 
 Additionally, you can add the configuration for the different Redmine environment.
 
