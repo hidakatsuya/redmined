@@ -18,10 +18,10 @@ A docked CLI for Redmine development environment. Inspired by [rails/docked](htt
 
 Download [redmined](./redmined) and place it in a location in your PATH, such as `~/.local/bin/`, and grant execution permission.
 
-If `curl` is available, you can also install it with the following command.
+Or, you can install it directly by running the following command.
 
 ```shell
-curl https://raw.githubusercontent.com/hidakatsuya/redmined/main/redmined -o ~/.local/bin/redmined && chmod +x $_
+wget -qO- https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh | sh
 ```
 
 ## Usage
