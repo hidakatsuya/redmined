@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "**.md"
       - "redmined"
+      - "install.sh"
   workflow_dispatch:
 
 jobs:
