@@ -89,7 +89,7 @@ You can create the configuration file named `.redmined.json` for different Redmi
 {
   "default": {
     "name": "redmine",
-    "ruby_version": "3.3",
+    "ruby": "3.3",
     "port": "3000",
     "env": {
       "PUMA_MIN_THREADS": 1
@@ -103,8 +103,8 @@ Then, you can use Redmine in the above environment by executing the command as u
 * `name`: It determines to the following settings
   * `REDMINED_BUNDLE_CACHE_VOLUME=redmined-<name>-bundle-cache`
   * `REDMINED_CONTAINER_NAME=redmined-<name>-container`
-* `ruby_version`: It determines the container image redmined uses
-  * `REDMINED_IMAGE=REDMINED_IMAGE:ruby<ruby_version>`
+* `ruby`: It determines the container image redmined uses
+  * `REDMINED_IMAGE=REDMINED_IMAGE:ruby<ruby>`
 * `port`: It determines the `--expose` settings of `docker run` and `$PORT` which `rails server` respects
   * `REDMINED_REDMINE_PORT=<port>`
   * `REDMINED_PUBLISH_PORT=<port>:<port>`
@@ -117,11 +117,11 @@ Additionally, you can add the configuration for the different Redmine environmen
 {
   "default": {
     "name": "redmine",
-    "ruby_version": "3.3"
+    "ruby": "3.3"
   },
   "ruby3.2": {
     "name": "redmine-ruby3.2",
-    "ruby_version": "3.2",
+    "ruby": "3.2",
     "port": "3001"
   }
 }

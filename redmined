@@ -106,9 +106,9 @@ load_config() {
         BUNDLE_CACHE_VOLUME="redmined-bundle-cache-$name"
     fi
 
-    local ruby_version=$(jq -r --arg t $target '.[$t].ruby_version // ""' $CONFIG_FILE)
-    if [ -n "$ruby_version" ]; then
-        IMAGE="$IMAGE:ruby$ruby_version"
+    local ruby=$(jq -r --arg t $target '.[$t].ruby // ""' $CONFIG_FILE)
+    if [ -n "$ruby" ]; then
+        IMAGE="$IMAGE:ruby$ruby"
     fi
 
     local env=$(jq -r --arg t $target '.[$t].env // {} | to_entries | map("\(.key)=\(.value)") | join(" ")' $CONFIG_FILE)
