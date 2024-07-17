@@ -16,12 +16,6 @@ A docked CLI for Redmine development environment. Inspired by [rails/docked](htt
 
 ## Installation
 
-Create a Docker volume for the bundle cache.
-
-```shell
-docker volume create redmine-bundle-cache
-```
-
 Download [redmined](./redmined) and place it in a location in your PATH, such as `~/.local/bin/`, and grant execution permission.
 
 If `curl` is available, you can also install it with the following command.
