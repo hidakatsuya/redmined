@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'redmined'
+      - "**.md"
+      - "redmined"
   workflow_dispatch:
 
 jobs:
@@ -32,10 +32,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - ruby-version: '3.3'
-            tags: 'ghcr.io/hidakatsuya/redmined:ruby3.3,ghcr.io/hidakatsuya/redmined:latest'
-          - ruby-version: '3.2'
-            tags: 'ghcr.io/hidakatsuya/redmined:ruby3.2'
+          - ruby-version: "3.3"
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.3,ghcr.io/hidakatsuya/redmined:latest"
+          - ruby-version: "3.2"
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.2"
 
     steps:
       - uses: actions/checkout@v4
@@ -56,4 +56,3 @@ jobs:
           push: true
           build-args: RUBY_VERSION=${{ matrix.ruby-version }}
           tags: ${{ matrix.tags }}
-
