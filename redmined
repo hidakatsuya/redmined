@@ -49,23 +49,23 @@ docker_run() {
     local user_option=""
 
     if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
-      user_option="-e USER_ID=$(id -u) -e GROUP_ID=$(id -g)"
+        user_option="-e USER_ID=$(id -u) -e GROUP_ID=$(id -g)"
     fi
 
     docker run --name $CONTAINER_NAME --rm -it \
-       $user_option \
-      -v ${PWD}:/redmine \
-      -v $BUNDLE_CACHE_VOLUME:/bundle \
-      -p ${PUBLISH_PORT:-"$REDMINE_PORT:$REDMINE_PORT"} \
-      -e PORT=$REDMINE_PORT \
-      $IMAGE "$@"
+        $user_option \
+        -v ${PWD}:/redmine \
+        -v $BUNDLE_CACHE_VOLUME:/bundle \
+        -p ${PUBLISH_PORT:-"$REDMINE_PORT:$REDMINE_PORT"} \
+        -e PORT=$REDMINE_PORT \
+        $IMAGE "$@"
 }
 
 docker_exec() {
     local user_option=""
 
     if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
-      user_option="--user $(id -u):$(id -g)"
+        user_option="--user $(id -u):$(id -g)"
     fi
 
     docker exec -it $user_option $CONTAINER_NAME "$@"
@@ -79,12 +79,12 @@ cd_redmine_root() {
     current_dir=$(pwd)
 
     while [ ! -f "Rakefile" ]; do
-      cd ..
-      if [ "$(pwd)" = "$current_dir" ]; then
-        echo "No Redmine root directory found"
-        exit 1
-      fi
-      current_dir=$(pwd)
+        cd ..
+        if [ "$(pwd)" = "$current_dir" ]; then
+            echo "No Redmine root directory found"
+            exit 1
+        fi
+        current_dir=$(pwd)
     done
 }
 
