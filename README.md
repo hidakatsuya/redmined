@@ -23,6 +23,9 @@ Or, you can install it directly by running the following command.
 ```shell
 wget -qO- https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh | sh
 ```
+```shell
+curl -sSL https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh | sh
+```
 
 ## Usage
 
