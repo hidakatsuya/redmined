@@ -152,11 +152,10 @@ main() {
             envs="env $CONTAINER_ENVS "
         fi
 
-        local container_command=$envs$@
         if [ ! $(container_running) ]; then
-            docker_run $container_command
+            docker_run $envs "$@"
         else
-            docker_exec $container_command
+            docker_exec $envs "$@"
         fi
     )
 }

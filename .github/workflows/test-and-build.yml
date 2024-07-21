@@ -1,4 +1,4 @@
-name: Build and publish
+name: Test and Build
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
       - main
     paths-ignore:
       - "**.md"
-      - "redmined"
       - "install.sh"
   workflow_dispatch:
 
@@ -14,12 +13,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    outputs:
+      # This is for determining weather an Docker image need to be built or not on the next job.
+      dockerfile-changed: ${{ contains(steps.changed-files.outputs.all_modified_files, 'Dockerfile') }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
       - uses: ./.github/actions/test
+
+      - uses: tj-actions/changed-files@v44
+        id: changed-files
 
   build-and-publish:
     needs: test
@@ -29,6 +35,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+
+    if: ${{ needs.test.outputs.dockerfile-changed == 'true' }}
 
     strategy:
       matrix:
