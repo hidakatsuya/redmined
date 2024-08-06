@@ -26,6 +26,8 @@ CONTAINER_ENVS=${REDMINED_CONTAINER_ENVS:-""}
 # Configuration file for redmined
 CONFIG_FILE=${REDMINED_CONFIG_FILE:-".redmined.json"}
 
+PLATFORM=${REDMINED_PLATFORM:-""}
+
 
 # This must be the same as the user name in the Dockerfile
 readonly CONTAINER_USER="developer"
@@ -50,13 +52,18 @@ EOS
 
 docker_run() {
     local user_option=""
-
     if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
         user_option="-e USER_ID=$(id -u) -e GROUP_ID=$(id -g)"
     fi
 
+    local platform_option=""
+    if [ -n "$PLATFORM" ]; then
+        platform_option="--platform $PLATFORM"
+    fi
+
     docker run --name $CONTAINER_NAME --rm -it \
         $user_option \
+        $platform_option \
         -v ${PWD}:/redmine \
         -v $BUNDLE_CACHE_VOLUME:/bundle \
         -p ${PUBLISH_PORT:-"$REDMINE_PORT:$REDMINE_PORT"} \
@@ -124,6 +131,11 @@ load_config() {
     local port=$(jq -r --arg t $target '.[$t].port // ""' $CONFIG_FILE)
     if [ -n "$port" ]; then
         REDMINE_PORT="$port"
+    fi
+
+    local platform=$(jq -r --arg t $target '.[$t].platform // ""' $CONFIG_FILE)
+    if [ -n "$platform" ]; then
+        PLATFORM="$platform"
     fi
 }
 
