@@ -77,6 +77,7 @@ redmined bin/rails test:system
 * `REDMINED_REDMINE_PORT` Port number for Redmine. If not set, use "3000" as default.
 * `REDMINED_CONTAINER_ENVS` Additional environment variables for redmined container. Multiple variables can be set by separating them with a space. If not set, use "" as default.
 * `REDMINED_PUBLISH_PORT` Port mapping for Redmine. If not set, use "3000:3000" as default.
+* `REDMINED_PLATFORM` Platform for the container image redmined uses.
 
 See [redmined](https://github.com/hidakatsuya/redmined/blob/main/redmined) for further details.
 
@@ -109,6 +110,8 @@ Then, you can use Redmine in the above environment by executing the command as u
   * `REDMINED_PUBLISH_PORT=<port>:<port>`
 * `env`: It determines additional environment variables for the redmined container
   * `REDMINED_CONTAINER_ENVS=values of <env>`
+* `platform`: It determines the platform of the container image redmined uses
+  * `REDMINED_PLATFORM=<platform>`
 
 Additionally, you can add the configuration for the different Redmine environment.
 
