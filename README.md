@@ -78,6 +78,7 @@ redmined bin/rails test:system
 * `REDMINED_CONTAINER_ENVS` Additional environment variables for redmined container. Multiple variables can be set by separating them with a space. If not set, use "" as default.
 * `REDMINED_PUBLISH_PORT` Port mapping for Redmine. If not set, use "3000:3000" as default.
 * `REDMINED_PLATFORM` Platform for the container image redmined uses.
+* `REDMINED_NO_TTY` Whether to run the container in non-TTY mode. If not set, disable non-TTY mode. No TTY mode is also enabled by `-T` opeion of redmined command.
 
 See [redmined](https://github.com/hidakatsuya/redmined/blob/main/redmined) for further details.
 
@@ -136,6 +137,21 @@ redmined -n ruby3.2 bin/rails server
 ```
 
 ## Tips
+
+### Executing with non-TTY mode
+
+You can execute the command with non-TTY mode by using the `-T` option.
+
+```shell
+redmined -T bundle install
+```
+
+Or, you can set the environment variable `REDMINED_NO_TTY` to enable non-TTY mode.
+
+```shell
+export REDMINED_NO_TTY=1
+redmined bundle install
+```
 
 ### Using separate environments for multiple Redmines
 

@@ -26,7 +26,12 @@ CONTAINER_ENVS=${REDMINED_CONTAINER_ENVS:-""}
 # Configuration file for redmined
 CONFIG_FILE=${REDMINED_CONFIG_FILE:-".redmined.json"}
 
+# Platform for the Docker image. If not set, use "" as default.
 PLATFORM=${REDMINED_PLATFORM:-""}
+
+# Whether to run the container in non-TTY mode. If not set, disable non-TTY mode.
+# No TTY mode is also enabled by `-T` opeion of redmined command.
+NO_TTY=${REDMINED_NO_TTY:-""}
 
 
 # This must be the same as the user name in the Dockerfile
@@ -61,7 +66,13 @@ docker_run() {
         platform_option="--platform $PLATFORM"
     fi
 
-    docker run --name $CONTAINER_NAME --rm -it \
+    local tty_option=""
+    if [ -z "$NO_TTY" ]; then
+        tty_option="-it"
+    fi
+
+    docker run --name $CONTAINER_NAME --rm \
+        $tty_option \
         $user_option \
         $platform_option \
         -v ${PWD}:/redmine \
@@ -148,9 +159,10 @@ main() {
         cd_redmine_root
 
         local config_name=""
-        while getopts ":n:" opt; do
+        while getopts ":n:T" opt; do
             case $opt in
                 n)    config_name=$OPTARG;;
+                T)    NO_TTY=1;;
                 \?|:) exit_with_usage;;
             esac
         done
