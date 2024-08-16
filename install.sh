@@ -12,7 +12,7 @@ install() {
     fi
 
     if command -v wget > /dev/null; then
-        wget -q -P $dir $REDMINED_FILE_URL
+        wget -q $REDMINED_FILE_URL -O $dir/redmined
     elif command -v curl > /dev/null; then
         curl -sL -o $dir/redmined $REDMINED_FILE_URL
     else
