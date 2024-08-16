@@ -46,6 +46,7 @@ Command:
 
 Options:
   -n NAME  Specify the configuration name to load from the configuration file
+  -T       Run the commands in non-TTY mode
 
 Examples:
   redmined bundle install
