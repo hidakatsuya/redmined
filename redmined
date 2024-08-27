@@ -85,14 +85,18 @@ docker_run() {
 
 docker_exec() {
     local user_option=""
-
     if [ -n "$MAP_HOST_USER_TO_CONTAINER_USER" ]; then
         user_option="--user $(id -u):$(id -g)"
     else
         user_option="--user $CONTAINER_USER"
     fi
 
-    docker exec -it $user_option $CONTAINER_NAME "$@"
+    local tty_option=""
+    if [ -z "$NO_TTY" ]; then
+        tty_option="-it"
+    fi
+
+    docker exec $tty_option $user_option $CONTAINER_NAME "$@"
 }
 
 container_running() {
