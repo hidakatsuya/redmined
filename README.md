@@ -67,6 +67,9 @@ redmined bin/rails test:system
 > [!NOTE]
 > Since Chrome is not installed on the ARM64 platform, `test:system` task can't be executed.
 
+> [!INFO]
+> I recommend you define a short command, such as `r`, as an alias for `redmined` command.
+
 ## Settings
 
 ### Global settings
@@ -135,6 +138,29 @@ The environment added above can be used as follows:
 
 ```
 redmined -n ruby3.2 bin/rails server
+```
+
+## Redmind CLI
+
+```
+$ redmined
+Usage: redmined [options] [command]
+
+Command:
+  Commands to run in the container
+
+Options:
+  -n NAME  Specify the configuration name to load from the configuration file
+  -T       Run the commands in non-TTY mode
+  -c       Print the contents of the configuration file
+
+Examples:
+  redmined bundle install
+  redmined bash
+  redmined bin/rails server
+  redmined -n any-config bundle show
+  redmined -T bin/rails test
+  redmined -c
 ```
 
 ## Tips
