@@ -67,7 +67,7 @@ redmined bin/rails test:system
 > [!NOTE]
 > Since Chrome is not installed on the ARM64 platform, `test:system` task can't be executed.
 
-> [!INFO]
+> [!TIP]
 > I recommend you define a short command, such as `r`, as an alias for `redmined` command.
 
 ## Settings
