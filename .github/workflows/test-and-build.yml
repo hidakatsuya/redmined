@@ -29,4 +29,8 @@ jobs:
 
     if: ${{ needs.check-need-to-build-image.outputs.is-need == 'true' }}
 
+    permissions:
+      contents: read
+      packages: write
+
     uses: ./.github/workflows/build.yml
