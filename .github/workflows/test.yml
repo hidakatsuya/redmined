@@ -5,9 +5,11 @@ on:
     branches:
       - dev/**
     paths-ignore:
-      - '**.md'
+      - "**.md"
   pull_request:
+
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   build:
@@ -19,4 +21,90 @@ jobs:
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
-      - uses: ./.github/actions/test
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: redmined:test
+
+      - uses: actions/checkout@v4
+        with:
+          repository: redmine/redmine
+          ref: master
+          path: redmine-src
+
+      - name: Set up redmined
+        run: |
+          chmod +x redmined
+          mkdir $HOME/.local/bin
+          cp redmined $HOME/.local/bin
+
+          echo "REDMINED_IMAGE=redmined:test" >> $GITHUB_ENV
+          echo 'REDMINED_CONTAINER_ENVS="CUSTOM_ENV1=1 CUSTOM_ENV2=2"' >> $GITHUB_ENV
+          echo "REDMINED_REDMINE_PORT=3001" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set up Redmine
+        run: |
+          chmod a+w -R .
+
+          cat <<EOS > config/database.yml
+          development:
+            adapter: sqlite3
+            database: db/development.sqlite3
+          test:
+            adapter: sqlite3
+            database: db/development.sqlite3
+          EOS
+
+          redmined bundle install
+          redmined bin/rails db:prepare
+        shell: script -q -e -c "bash {0}"
+        working-directory: redmine-src
+
+      - name: Test
+        run: |
+          docker volume ls
+
+          redmined cat /etc/os-release
+          redmined env RAILS_ENV=development bin/about
+
+          redmined printenv | grep CUSTOM_ENV1=1 || exit 1
+          redmined printenv | grep CUSTOM_ENV2=2 || exit 1
+          redmined printenv | grep PORT=3001 || exit 1
+
+          redmined bin/rails test test/unit/news_test.rb
+          redmined bin/rails test test/system/my_page_test.rb
+        shell: script -q -e -c "bash {0}"
+        working-directory: redmine-src
+
+      - name: Test for the indivisual settings
+        run: |
+          cat <<EOS > .redmined.json
+          {
+            "default": {
+              "name": "default",
+              "port": "4000",
+              "env": {
+                "DEFAULT_ENV": "1"
+              }
+            },
+            "other1": {
+              "name": "other1",
+              "port": "4001",
+              "env": {
+                "OTHER1_ENV": "1"
+              }
+            }
+          }
+          EOS
+
+          # Test against default
+          redmined printenv | grep DEFAULT_ENV=1 || exit 1
+          redmined printenv | grep PORT=4000 || exit 1
+
+          # Test against other1
+          redmined -n other1 printenv | grep OTHER1_ENV=1 || exit 1
+          redmined -n other1 printenv | grep PORT=4001 || exit 1
+        shell: script -q -e -c "bash {0}"
+        working-directory: redmine-src
