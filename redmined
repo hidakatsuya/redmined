@@ -48,6 +48,7 @@ Options:
   -n NAME  Specify the configuration name to load from the configuration file
   -T       Run the commands in non-TTY mode
   -c       Print the contents of the configuration file
+  -u       Update the redmined script itself and the redmined images to the latest version
 
 Examples:
   redmined bundle install
@@ -56,6 +57,7 @@ Examples:
   redmined -n any-config bundle show
   redmined -T bin/rails test
   redmined -c
+  redmined -u
 EOS
     exit 0
 }
@@ -168,6 +170,32 @@ print_configuration() {
     exit 0
 }
 
+update() {
+    local install_file_url=https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh
+    local install_dir=$(dirname $(readlink -f $0))
+
+    echo "Updating redmined..."
+
+    if command -v wget > /dev/null; then
+        wget -qO- $install_file_url | REDMINED_INSTALL_DIR=$install_dir sh
+    elif command -v curl > /dev/null; then
+        curl -sSL $install_file_url | REDMINED_INSTALL_DIR=$install_dir sh
+    else
+        echo  "Failed to update redmined: wget or curl is required."
+        exit 1
+    fi
+
+    echo ""
+    echo "Updating redmined images..."
+
+    local images=$(docker images --format "{{.Repository}}:{{.Tag}}" $IMAGE | grep -v "<none>")
+    for image in $images; do
+        docker pull -q $image
+    done
+
+    exit 0
+}
+
 main() {
     if [ "$#" -eq 0 ]; then
         exit_with_usage
@@ -177,11 +205,12 @@ main() {
         cd_redmine_root
 
         local config_name=""
-        while getopts ":n:Tc" opt; do
+        while getopts ":n:Tcu" opt; do
             case $opt in
                 n)    config_name=$OPTARG;;
                 T)    NO_TTY=1;;
                 c)    print_configuration;;
+                u)    update;;
                 \?|:) exit_with_usage;;
             esac
         done

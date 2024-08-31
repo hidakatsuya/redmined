@@ -153,6 +153,7 @@ Options:
   -n NAME  Specify the configuration name to load from the configuration file
   -T       Run the commands in non-TTY mode
   -c       Print the contents of the configuration file
+  -u       Update the redmined script itself and the redmined images to the latest version
 
 Examples:
   redmined bundle install
@@ -161,9 +162,18 @@ Examples:
   redmined -n any-config bundle show
   redmined -T bin/rails test
   redmined -c
+  redmined -u
 ```
 
-## Tips
+## Advanced Usage and Tips
+
+### Updating the redmined CLI and the redmined images
+
+You can update the redmined CLI and the redmined images by executing the following command.
+
+```shell
+redmined -u
+```
 
 ### Executing with non-TTY mode
 
