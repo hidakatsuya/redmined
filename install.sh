@@ -31,4 +31,4 @@ abort() {
     exit 1
 }
 
-install ~/.local/bin || install ~/bin || abort "~/.local/bin and ~/bin are not found."
+install "$INSTALL_DIR" || install ~/.local/bin || install ~/bin || abort "~/.local/bin and ~/bin are not found."
