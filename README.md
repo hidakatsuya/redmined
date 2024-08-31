@@ -169,10 +169,16 @@ Examples:
 
 ### Updating the redmined CLI and the redmined images
 
-You can update the redmined CLI and the redmined images by executing the following command.
+You can update the redmined CLI and the redmined images by executing `redmined -u`.
 
 ```shell
-redmined -u
+$ redmined -u
+Updating redmined...
+Installed redmined to /home/hidakatsuya/.local/bin
+
+Updating redmined images...
+ghcr.io/hidakatsuya/redmined:latest
+ghcr.io/hidakatsuya/redmined:ruby3.3
 ```
 
 ### Executing with non-TTY mode
