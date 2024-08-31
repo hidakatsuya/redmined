@@ -2,19 +2,20 @@
 
 set -eu
 
-readonly REDMINED_FILE_URL=https://raw.githubusercontent.com/hidakatsuya/redmined/main/redmined
+readonly INSTALL_FILE_URL=https://raw.githubusercontent.com/hidakatsuya/redmined/main/redmined
+readonly INSTALL_DIR=${REDMINED_INSTALL_DIR:-""}
 
 install() {
     local dir=$1
 
-    if [ ! -d $dir ]; then
+    if [ ! -d "$dir" ]; then
         return 1
     fi
 
     if command -v wget > /dev/null; then
-        wget -q $REDMINED_FILE_URL -O $dir/redmined
+        wget -q $INSTALL_FILE_URL -O $dir/redmined
     elif command -v curl > /dev/null; then
-        curl -sL -o $dir/redmined $REDMINED_FILE_URL
+        curl -sL -o $dir/redmined $INSTALL_FILE_URL
     else
         abort "wget or curl is required."
     fi
