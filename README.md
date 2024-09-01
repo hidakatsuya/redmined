@@ -108,6 +108,8 @@ Then, you can use Redmine in the above environment by executing the command as u
 * `name`: It determines to the following settings
   * `REDMINED_BUNDLE_CACHE_VOLUME=redmined-<name>-bundle-cache`
   * `REDMINED_CONTAINER_NAME=redmined-<name>-container`
+* `image`: It determines the container image redmined uses
+  * `REDMINED_IMAGE=<image>`
 * `ruby`: It determines the container image redmined uses
   * `REDMINED_IMAGE=REDMINED_IMAGE:ruby<ruby>`
 * `port`: It determines the `--expose` settings of `docker run` and `$PORT` which `rails server` respects

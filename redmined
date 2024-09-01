@@ -186,6 +186,11 @@ load_config() {
         BUNDLE_CACHE_VOLUME="redmined-bundle-cache-$name"
     fi
 
+    local img=$(jq -r --arg t $target '.[$t].image // ""' $CONFIG_FILE)
+    if [ -n "$img" ]; then
+        IMAGE="$img"
+    fi
+
     local ruby=$(jq -r --arg t $target '.[$t].ruby // ""' $CONFIG_FILE)
     if [ -n "$ruby" ]; then
         IMAGE="$IMAGE:ruby$ruby"
