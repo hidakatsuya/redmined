@@ -140,31 +140,6 @@ The environment added above can be used as follows:
 redmined -n ruby3.2 bin/rails server
 ```
 
-## Redmind CLI
-
-```
-$ redmined
-Usage: redmined [options] [command]
-
-Command:
-  Commands to run in the container
-
-Options:
-  -n NAME  Specify the configuration name to load from the configuration file
-  -T       Run the commands in non-TTY mode
-  -c       Print the contents of the configuration file
-  -u       Update the redmined script itself and the redmined images to the latest version
-
-Examples:
-  redmined bundle install
-  redmined bash
-  redmined bin/rails server
-  redmined -n any-config bundle show
-  redmined -T bin/rails test
-  redmined -c
-  redmined -u
-```
-
 ## Advanced Usage and Tips
 
 ### Updating the redmined CLI and the redmined images
@@ -247,4 +222,75 @@ After that, you can remove the bundle cache volume by the following command.
 
 ```shell
 docker volume rm <the bundle cache volume name>
+```
+
+## Redmind CLI
+
+```
+$ redmined
+Usage: redmined [options] [command]
+
+Command:
+  Commands to run in the container
+
+Options:
+  -n NAME  Specify the configuration name to load from the configuration file
+  -T       Run the commands in non-TTY mode
+  -c       Print the contents of the configuration file
+  -u       Update the redmined script itself and the redmined images to the latest version
+
+Examples:
+  Run commands in the container.
+  $ redmined ruby -v
+  ruby 3.3.4 (2024-07-09 revision be1089c8ec) [x86_64-linux]
+
+  $ redmined bundle install
+  Fetching gem metadata from https://rubygems.org/...
+  ...
+
+  Enter the container through the bash shell.
+  $ redmined bash
+  developer@7cc80c9cd1f7:/redmine$
+
+  Launch the Redmine server.
+  $ redmined bin/rails server
+  => Booting Puma
+  => Rails 7.2.1 application starting in development
+  => Run `bin/rails server --help` for more startup options
+  Puma starting in single mode...
+  * Puma version: 6.4.2 (ruby 3.3.4-p94) ("The Eagle of Durango")
+  *  Min threads: 0
+  *  Max threads: 5
+  *  Environment: development
+  *          PID: 1
+  * Listening on http://0.0.0.0:3000
+  Use Ctrl-C to stop
+
+  Run the comands on the "any-config" configuration in the .redmined.json.
+  $ redmined -n any-config bundle show
+
+  Run the commands in non-TTY mode.
+  $ redmined -T bin/rails test
+
+  Print the contents of the .redmined.json.
+  $ redmined -c
+  {
+    "default": {
+      "name": "redmica",
+      "port": "3001"
+    },
+    "ruby3.2": {
+      "name": "redmica-ruby3.2",
+      "ruby": "3.2"
+    }
+  }
+
+  Update the redmined script itself and the redmined images to the latest version.
+  $ redmined -u
+  Updating redmined...
+  Installed redmined to /home/hidakatsuya/.local/bin
+
+  Updating redmined images...
+  ghcr.io/hidakatsuya/redmined:latest
+  ghcr.io/hidakatsuya/redmined:ruby3.3
 ```
