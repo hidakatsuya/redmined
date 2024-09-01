@@ -213,15 +213,15 @@ redmined env RAILS_ENV=development bin/about
 
 ### Resetting the installed gems
 
-The gems installed by `redmined bundle install` are stored in the bundle cache volume.
-You can check the name of the bundle cache volume by the following way.
+The gems installed by `redmined bundle install` are stored in the docker volume.
+You can check the name of the docker volume by the following way.
 
-If there is the `.redmined.json` file in the Redmine root directory, the bundle cache volume name is `redmined-bundle-cache-<name of the current configuration>`, otherwise, it is `redmine-bundle-cache`.
+If there is the `.redmined.json` file in the Redmine root directory, the docker volume name is `redmined-bundle-cache-<name of the current configuration>`, otherwise, it is `redmine-bundle-cache`.
 
-After that, you can remove the bundle cache volume by the following command.
+After that, you can remove the docker volume by the following command.
 
 ```shell
-docker volume rm <the bundle cache volume name>
+docker volume rm <the docker volume name>
 ```
 
 ## Redmind CLI
