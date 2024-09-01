@@ -38,7 +38,7 @@ NO_TTY=${REDMINED_NO_TTY:-""}
 readonly CONTAINER_USER="developer"
 
 exit_with_usage() {
-    cat <<EOS 1>&2
+    cat <<'EOS' 1>&2
 Usage: redmined [options] [command]
 
 Command:
@@ -51,13 +51,59 @@ Options:
   -u       Update the redmined script itself and the redmined images to the latest version
 
 Examples:
-  redmined bundle install
-  redmined bash
-  redmined bin/rails server
-  redmined -n any-config bundle show
-  redmined -T bin/rails test
-  redmined -c
-  redmined -u
+  Run commands in the container.
+  $ redmined ruby -v
+  ruby 3.3.4 (2024-07-09 revision be1089c8ec) [x86_64-linux]
+
+  $ redmined bundle install
+  Fetching gem metadata from https://rubygems.org/...
+  ...
+
+  Enter the container through the bash shell.
+  $ redmined bash
+  developer@7cc80c9cd1f7:/redmine$
+
+  Launch the Redmine server.
+  $ redmined bin/rails server
+  => Booting Puma
+  => Rails 7.2.1 application starting in development
+  => Run `bin/rails server --help` for more startup options
+  Puma starting in single mode...
+  * Puma version: 6.4.2 (ruby 3.3.4-p94) ("The Eagle of Durango")
+  *  Min threads: 0
+  *  Max threads: 5
+  *  Environment: development
+  *          PID: 1
+  * Listening on http://0.0.0.0:3000
+  Use Ctrl-C to stop
+
+  Run the comands on the "any-config" configuration in the .redmined.json.
+  $ redmined -n any-config bundle show
+
+  Run the commands in non-TTY mode.
+  $ redmined -T bin/rails test
+
+  Print the contents of the .redmined.json.
+  $ redmined -c
+  {
+    "default": {
+      "name": "redmica",
+      "port": "3001"
+    },
+    "ruby3.2": {
+      "name": "redmica-ruby3.2",
+      "ruby": "3.2"
+    }
+  }
+
+  Update the redmined script itself and the redmined images to the latest version.
+  $ redmined -u
+  Updating redmined...
+  Installed redmined to /home/hidakatsuya/.local/bin
+
+  Updating redmined images...
+  ghcr.io/hidakatsuya/redmined:latest
+  ghcr.io/hidakatsuya/redmined:ruby3.3
 EOS
     exit 0
 }
