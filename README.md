@@ -1,15 +1,15 @@
 # Redmined
 
-A docked CLI for Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
+A dockerized CLI for the Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
 
 [![Build](https://github.com/hidakatsuya/redmined/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/hidakatsuya/redmined/actions/workflows/test-and-build.yml)
 
 ## Features
 
-* Requires only Docker CLI
-* Supports running most Redmine tests
-* CLI can be executed in subdirectories
-* Supports multiple Redmine development environments
+* You can develop in a reproducible Redmine development environment anywhere
+* All you need is Redmine source code and Docker
+* You can develop in multiple environments with different Ruby versions, ports, and environment variables
+* This command can be executed in a subdirectory of the Redmine source code
 
 ## Prerequisites
 
