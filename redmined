@@ -155,6 +155,7 @@ docker_exec() {
 }
 
 image_name() {
+    # "image:tag" > "image tag" > ["image", "tag"]
     local image_array=(${IMAGE//:/ })
 
     local image_name=${image_array[0]}
