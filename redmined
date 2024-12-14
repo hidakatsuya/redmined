@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -euC
 
@@ -10,6 +10,9 @@ MAP_HOST_USER_TO_CONTAINER_USER=${REDMINED_MAP_HOST_USER_TO_CONTAINER_USER:-""}
 
 # Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
 BUNDLE_CACHE_VOLUME=${REDMINED_BUNDLE_CACHE_VOLUME:-"redmine-bundle-cache"}
+
+# Ruby version for redmined. If not set, use "" as default.
+IMAGE_RUBY_VERSION=${REDMINED_RUBY:-""}
 
 # Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
 IMAGE=${REDMINED_IMAGE:-"ghcr.io/hidakatsuya/redmined"}
@@ -132,7 +135,7 @@ docker_run() {
         -v $BUNDLE_CACHE_VOLUME:/bundle \
         -p ${PUBLISH_PORT:-"$REDMINE_PORT:$REDMINE_PORT"} \
         -e PORT=$REDMINE_PORT \
-        $IMAGE "$@"
+        $(image_name) "$@"
 }
 
 docker_exec() {
@@ -149,6 +152,19 @@ docker_exec() {
     fi
 
     docker exec $tty_option $user_option $CONTAINER_NAME "$@"
+}
+
+image_name() {
+    local image_array=(${IMAGE//:/ })
+
+    local image_name=${image_array[0]}
+    local image_tag=${image_array[1]:-""}
+
+    if [ -n "$IMAGE_RUBY_VERSION" ]; then
+        echo "$image_name:${image_tag:-ruby$IMAGE_RUBY_VERSION}"
+    else
+        echo $IMAGE
+    fi
 }
 
 container_running() {
@@ -193,7 +209,7 @@ load_config() {
 
     local ruby=$(jq -r --arg t $target '.[$t].ruby // ""' $CONFIG_FILE)
     if [ -n "$ruby" ]; then
-        IMAGE="$IMAGE:ruby$ruby"
+        IMAGE_RUBY_VERSION="$ruby"
     fi
 
     local env=$(jq -r --arg t $target '.[$t].env // {} | to_entries | map("\(.key)=\(.value)") | join(" ")' $CONFIG_FILE)
