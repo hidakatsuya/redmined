@@ -83,6 +83,7 @@ redmined bin/rails test:system
 * `REDMINED_MAP_HOST_USER_TO_CONTAINER_USER` Map the UID and GID of the host user to the container user
 * `REDMINED_BUNDLE_CACHE_VOLUME` Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
 * `REDMINED_IMAGE` Docker image for redmined. If not set, use "ghcr.io/hidakatsuya/redmined" as default.
+* `REDMINED_RUBY` Ruby version for redmined. If set and REDMINED_IMAGE does not contain the image tag, set the image tag to "ruby<REDMINED_RUBY>".
 * `REDMINED_REDMINE_PORT` Port number for Redmine. If not set, use "3000" as default.
 * `REDMINED_CONTAINER_ENVS` Additional environment variables for redmined container. Multiple variables can be set by separating them with a space. If not set, use "" as default.
 * `REDMINED_PUBLISH_PORT` Port mapping for Redmine. If not set, use "3000:3000" as default.
