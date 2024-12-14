@@ -5,36 +5,37 @@ FROM ruby:$RUBY_VERSION-slim
 ARG TARGETPLATFORM
 
 RUN set -eux; \
-        apt-get update; \
-        apt-get install -y --no-install-recommends \
-          sudo build-essential curl wget vim \
-          bzr git mercurial subversion cvs \
-          ghostscript \
-          gsfonts \
-          imagemagick libmagick++-dev \
-          libsqlite3-dev \
-          libnss3-dev \
-          libclang-dev \
-    ; \
-    # Allow ImageMagick to read PDFs
-    sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
-    \
-    # Install Node.js and yarn
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    sudo build-essential curl wget vim \
+    bzr git mercurial subversion cvs \
+    ghostscript \
+    gsfonts \
+    imagemagick libmagick++-dev \
+    libsqlite3-dev \
+    libnss3-dev \
+    libclang-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Allow ImageMagick to read PDFs
+RUN set -eux; \
+    sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
+
+# Install Node.js and yarn
+RUN set -eux; \
     curl -fsSL https://deb.nodesource.com/setup_21.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
-    npm install -g yarn; \
-    \
+    npm install -g yarn && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome for system test when the target platform is amd64
 RUN set -eux; \
     if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-      echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-      apt-get update && apt-get install -y --no-install-recommends google-chrome-stable; \
-      \
-      rm -rf /var/lib/apt/lists/*; \
-    fi;
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && apt-get install -y --no-install-recommends google-chrome-stable && \
+    rm -rf /var/lib/apt/lists/*; \
+    fi
 
 # Add a user to run and develop the application.
 # In the entrypoint.sh, the UID and GID of this developer user will be set to the same as the host user.
