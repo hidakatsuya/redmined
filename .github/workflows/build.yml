@@ -15,10 +15,10 @@ jobs:
     strategy:
       matrix:
         include:
+          - ruby-version: "3.4-rc"
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4-rc"
           - ruby-version: "3.3"
             tags: "ghcr.io/hidakatsuya/redmined:ruby3.3,ghcr.io/hidakatsuya/redmined:latest"
-          - ruby-version: "3.2"
-            tags: "ghcr.io/hidakatsuya/redmined:ruby3.2"
 
     steps:
       - uses: actions/checkout@v4
