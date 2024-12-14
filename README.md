@@ -6,10 +6,10 @@ A dockerized CLI for the Redmine development environment. Inspired by [rails/doc
 
 ## Features
 
-* You can develop in a reproducible Redmine development environment anywhere
-* All you need is Redmine source code and Docker
-* You can develop in multiple environments with different Ruby versions, ports, and environment variables
-* This command can be executed in a subdirectory of the Redmine source code
+* Provides a reproducible Redmine development environment anywhere
+* Requires only Redmine source code and Docker
+* Supports multiple environments with different Ruby versions, custom ports, and configurable environment variables
+* Can be executed from any subdirectory of the Redmine source code
 
 ## Prerequisites
 
@@ -69,6 +69,11 @@ redmined bin/rails test:system
 
 > [!TIP]
 > I recommend you define a short command, such as `r`, as an alias for `redmined` command.
+
+## Supported Versions
+
+* **Redmine**: Tested with the latest `master` branch of [redmine/redmine](https://github.com/redmine/redmine)
+* **Ruby**: Supports Ruby 3.2, 3.3, 3.4-rc
 
 ## Settings
 
