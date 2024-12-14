@@ -14,6 +14,7 @@ RUN set -eux; \
           imagemagick libmagick++-dev \
           libsqlite3-dev \
           libnss3-dev \
+          libclang-dev \
     ; \
     # Allow ImageMagick to read PDFs
     sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
@@ -58,4 +59,3 @@ ENV GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usa
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-
