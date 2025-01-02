@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - ruby-version: "3.4-rc"
-            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4-rc"
+          - ruby-version: "3.4"
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4"
           - ruby-version: "3.3"
             tags: "ghcr.io/hidakatsuya/redmined:ruby3.3,ghcr.io/hidakatsuya/redmined:latest"
 
