@@ -41,21 +41,19 @@ jobs:
           cp redmined $HOME/.local/bin
 
           echo "REDMINED_IMAGE=redmined:test" >> $GITHUB_ENV
-          echo 'REDMINED_CONTAINER_ENVS="CUSTOM_ENV1=1 CUSTOM_ENV2=2"' >> $GITHUB_ENV
           echo "REDMINED_REDMINE_PORT=3001" >> $GITHUB_ENV
         shell: bash
 
       - name: Set up Redmine
+        env:
+          REDMINED_CONTAINER_ENVS: RAILS_ENV=test
         run: |
           chmod a+w -R .
 
           cat <<EOS > config/database.yml
-          development:
-            adapter: sqlite3
-            database: db/development.sqlite3
           test:
             adapter: sqlite3
-            database: db/development.sqlite3
+            database: db/test.sqlite3
           EOS
 
           redmined bundle install
@@ -64,18 +62,19 @@ jobs:
         working-directory: redmine-src
 
       - name: Test
+        env:
+          REDMINED_CONTAINER_ENVS: RAILS_ENV=test
         run: |
           docker volume ls
 
           redmined cat /etc/os-release
-          redmined env RAILS_ENV=development bin/about
+          redmined bin/about
 
-          redmined printenv | grep CUSTOM_ENV1=1 || exit 1
-          redmined printenv | grep CUSTOM_ENV2=2 || exit 1
+          redmined printenv | grep RAILS_ENV=test || exit 1
           redmined printenv | grep PORT=3001 || exit 1
 
           redmined bin/rails test test/unit/news_test.rb
-          redmined bin/rails test test/system/my_page_test.rb
+          redmined bin/rails test test/system/versions_test.rb
         shell: script -q -e -c "bash {0}"
         working-directory: redmine-src
 
