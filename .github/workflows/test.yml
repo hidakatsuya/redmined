@@ -37,7 +37,7 @@ jobs:
       - name: Set up redmined
         run: |
           chmod +x redmined
-          mkdir $HOME/.local/bin
+          mkdir -p $HOME/.local/bin
           cp redmined $HOME/.local/bin
 
           echo "REDMINED_IMAGE=redmined:test" >> $GITHUB_ENV
