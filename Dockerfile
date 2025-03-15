@@ -14,6 +14,7 @@ RUN set -eux; \
     imagemagick libmagick++-dev \
     libsqlite3-dev \
     libnss3-dev \
+    libyaml-dev \
     libclang-dev && \
     rm -rf /var/lib/apt/lists/*
 
