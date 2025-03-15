@@ -2,7 +2,7 @@
 
 A dockerized CLI for the Redmine development environment. Inspired by [rails/docked](https://github.com/rails/docked).
 
-[![Build](https://github.com/hidakatsuya/redmined/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/hidakatsuya/redmined/actions/workflows/test-and-build.yml)
+[![Test](https://github.com/hidakatsuya/redmined/actions/workflows/test.yml/badge.svg)](https://github.com/hidakatsuya/redmined/actions/workflows/test.yml)
 
 ## Features
 
