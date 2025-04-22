@@ -16,9 +16,9 @@ jobs:
       matrix:
         include:
           - ruby-version: "3.4"
-            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4"
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4,ghcr.io/hidakatsuya/redmined:latest"
           - ruby-version: "3.3"
-            tags: "ghcr.io/hidakatsuya/redmined:ruby3.3,ghcr.io/hidakatsuya/redmined:latest"
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.3"
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
