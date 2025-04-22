@@ -36,6 +36,8 @@ PLATFORM=${REDMINED_PLATFORM:-""}
 # No TTY mode is also enabled by `-T` opeion of redmined command.
 NO_TTY=${REDMINED_NO_TTY:-""}
 
+# Network for the Docker container. If not set, use "" as default.
+NETWORK=${REDMINED_NETWORK:-""}
 
 # This must be the same as the user name in the Dockerfile
 readonly CONTAINER_USER="developer"
@@ -127,10 +129,16 @@ docker_run() {
         tty_option="-it"
     fi
 
+    local network_option=""
+    if [ -n "$NETWORK" ]; then
+        network_option="--network $NETWORK"
+    fi
+
     docker run --name $CONTAINER_NAME --rm \
         $tty_option \
         $user_option \
         $platform_option \
+        $network_option \
         -v ${PWD}:/redmine \
         -v $BUNDLE_CACHE_VOLUME:/bundle \
         -p ${PUBLISH_PORT:-"$REDMINE_PORT:$REDMINE_PORT"} \
@@ -226,6 +234,11 @@ load_config() {
     local platform=$(jq -r --arg t $target '.[$t].platform // ""' $CONFIG_FILE)
     if [ -n "$platform" ]; then
         PLATFORM="$platform"
+    fi
+
+    local network=$(jq -r --arg t $target '.[$t].network // ""' $CONFIG_FILE)
+    if [ -n "$network" ]; then
+        NETWORK="$network"
     fi
 }
 
