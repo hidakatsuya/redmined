@@ -13,6 +13,8 @@ RUN set -eux; \
     gsfonts \
     imagemagick libmagick++-dev \
     libsqlite3-dev \
+    libpq-dev \
+    default-mysql-client \
     libnss3-dev \
     libyaml-dev \
     libclang-dev && \

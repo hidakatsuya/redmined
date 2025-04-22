@@ -89,6 +89,7 @@ redmined bin/rails test:system
 * `REDMINED_PUBLISH_PORT` Port mapping for Redmine. If not set, use "3000:3000" as default.
 * `REDMINED_PLATFORM` Platform for the container image redmined uses.
 * `REDMINED_NO_TTY` Whether to run the container in non-TTY mode. If not set, disable non-TTY mode. No TTY mode is also enabled by `-T` opeion of redmined command.
+* `REDMINED_NETWORK` Network for the Docker container. If not set, use "" as default.
 
 See [redmined](https://github.com/hidakatsuya/redmined/blob/main/redmined) for further details.
 
@@ -125,6 +126,8 @@ Then, you can use Redmine in the above environment by executing the command as u
   * `REDMINED_CONTAINER_ENVS=values of <env>`
 * `platform`: It determines the platform of the container image redmined uses
   * `REDMINED_PLATFORM=<platform>`
+* `network`: It determines the network of the container image redmined uses
+  * `REDMINED_NETWORK=<network>`
 
 Additionally, you can add the configuration for the different Redmine environment.
 
