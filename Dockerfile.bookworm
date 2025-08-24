@@ -45,7 +45,6 @@ RUN groupadd $USER_NAME && \
 # Allow general users to use sudo.
 RUN echo "$USER_NAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USER_NAME
 
-RUN mkdir /bundle && chmod -R ugo+rw /bundle
 VOLUME /bundle
 ENV BUNDLE_PATH="/bundle"
 
