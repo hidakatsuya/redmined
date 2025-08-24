@@ -39,8 +39,13 @@ NO_TTY=${REDMINED_NO_TTY:-""}
 # Network for the Docker container. If not set, use "" as default.
 NETWORK=${REDMINED_NETWORK:-""}
 
-# This must be the same as the user name in the Dockerfile
-readonly CONTAINER_USER="developer"
+# Which Docker command to use, docker or container. If not set, DOCKER_CMD="docker"
+if [ "${REDMINED_USE_APPLE_CONTAINER:-""}" = "1" ]; then
+    readonly DOCKER_CMD="container"
+else
+    readonly DOCKER_CMD="docker"
+fi
+
 
 exit_with_usage() {
     cat <<'EOS' 1>&2
@@ -134,7 +139,7 @@ docker_run() {
         network_option="--network $NETWORK"
     fi
 
-    docker run --name $CONTAINER_NAME --rm \
+    $DOCKER_CMD run --name $CONTAINER_NAME --rm \
         $tty_option \
         $user_option \
         $platform_option \
@@ -159,7 +164,7 @@ docker_exec() {
         tty_option="-it"
     fi
 
-    docker exec $tty_option $user_option $CONTAINER_NAME "$@"
+    $DOCKER_CMD exec $tty_option $user_option $CONTAINER_NAME "$@"
 }
 
 image_name() {
@@ -177,7 +182,11 @@ image_name() {
 }
 
 container_running() {
-    docker ps -q --filter name=$CONTAINER_NAME
+    if [ "$DOCKER_CMD" = "container" ]; then
+        $DOCKER_CMD ls -a | awk -v name="$CONTAINER_NAME" '$1 == name {print $1}'
+    else
+        $DOCKER_CMD ps -q --filter name=$CONTAINER_NAME
+    fi
 }
 
 cd_redmine_root() {
@@ -269,10 +278,20 @@ update() {
     echo ""
     echo "Updating redmined images..."
 
-    local images=$(docker images --format "{{.Repository}}:{{.Tag}}" $IMAGE | grep -v "<none>")
-    for image in $images; do
-        docker pull -q $image
-    done
+    if [ "$DOCKER_CMD" = "container" ]; then
+        # Apple container CLI does not support --format, so use awk to extract repository:tag
+        local images=$(container images ls $IMAGE | awk 'NR>1 {print $1 ":" $2}' | grep -v "<none>")
+
+        for image in $images; do
+            container images pull $image
+        done
+    else
+        local images=$(docker images --format "{{.Repository}}:{{.Tag}}" $IMAGE | grep -v "<none>")
+
+        for image in $images; do
+            docker pull -q $image
+        done
+    fi
 
     exit 0
 }
@@ -305,7 +324,7 @@ main() {
             envs="env $CONTAINER_ENVS "
         fi
 
-        if [ ! $(container_running) ]; then
+        if [ -z "$(container_running)" ]; then
             docker_run $envs "$@"
         else
             docker_exec $envs "$@"
