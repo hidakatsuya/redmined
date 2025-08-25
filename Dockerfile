@@ -1,6 +1,6 @@
 ARG RUBY_VERSION=3.4
 
-FROM ruby:$RUBY_VERSION-slim
+FROM ruby:$RUBY_VERSION-slim-trixie
 
 ARG TARGETPLATFORM
 
@@ -19,10 +19,6 @@ RUN set -eux; \
     libyaml-dev \
     libclang-dev && \
     rm -rf /var/lib/apt/lists/*
-
-# Allow ImageMagick to read PDFs
-RUN set -eux; \
-    sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
 
 # Install Node.js and yarn
 RUN set -eux; \
