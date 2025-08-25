@@ -16,7 +16,7 @@ jobs:
       matrix:
         include:
           - ruby-version: "3.4"
-            dockerfile: Dockerfile.bookwarm
+            dockerfile: Dockerfile.bookworm
             tags: "ghcr.io/hidakatsuya/redmined:ruby3.4,ghcr.io/hidakatsuya/redmined:latest"
 
           - ruby-version: "3.4"
@@ -38,6 +38,7 @@ jobs:
         uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
         with:
           context: .
+          file: ${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: RUBY_VERSION=${{ matrix.ruby-version }}
