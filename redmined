@@ -2,6 +2,9 @@
 
 set -euC
 
+# Experimental: Whether to use Apple container. If not set, do not use Apple container.
+USE_APPLE_CONTAINER=${REDMINED_USE_APPLE_CONTAINER:-""}
+
 # Container name for redmined. If not set, use "redmined-container" as default.
 CONTAINER_NAME=${REDMINED_CONTAINER_NAME:-"redmined-container"}
 
@@ -9,7 +12,7 @@ CONTAINER_NAME=${REDMINED_CONTAINER_NAME:-"redmined-container"}
 MAP_HOST_USER_TO_CONTAINER_USER=${REDMINED_MAP_HOST_USER_TO_CONTAINER_USER:-""}
 
 # Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
-BUNDLE_CACHE_VOLUME=${REDMINED_BUNDLE_CACHE_VOLUME:-"redmine-bundle-cache"}
+BUNDLE_CACHE_VOLUME=${REDMINED_BUNDLE_CACHE_VOLUME:-"redmined-bundle-cache"}
 
 # Ruby version for redmined. If not set, use "" as default.
 IMAGE_RUBY_VERSION=${REDMINED_RUBY:-""}
@@ -41,6 +44,14 @@ NETWORK=${REDMINED_NETWORK:-""}
 
 # This must be the same as the user name in the Dockerfile
 readonly CONTAINER_USER="developer"
+
+# Which Docker command to use, docker or container. If not set, CONTAINER_CMD="docker"
+if [ -n "$USE_APPLE_CONTAINER" ]; then
+    readonly CONTAINER_CMD="container"
+else
+    readonly CONTAINER_CMD="docker"
+fi
+
 
 exit_with_usage() {
     cat <<'EOS' 1>&2
@@ -121,7 +132,11 @@ docker_run() {
 
     local platform_option=""
     if [ -n "$PLATFORM" ]; then
-        platform_option="--platform $PLATFORM"
+        if [ "$CONTAINER_CMD" = "container" ]; then
+            platform_option="--arch $PLATFORM"
+        else
+            platform_option="--platform $PLATFORM"
+        fi
     fi
 
     local tty_option=""
@@ -134,7 +149,14 @@ docker_run() {
         network_option="--network $NETWORK"
     fi
 
-    docker run --name $CONTAINER_NAME --rm \
+    if [ "$CONTAINER_CMD" = "container" ]; then
+        # Apple container CLI does not support automatic volume creation.
+        if ! container volume ls | grep -q $BUNDLE_CACHE_VOLUME; then
+            container volume create $BUNDLE_CACHE_VOLUME
+        fi
+    fi
+
+    $CONTAINER_CMD run --name $CONTAINER_NAME --rm \
         $tty_option \
         $user_option \
         $platform_option \
@@ -159,7 +181,7 @@ docker_exec() {
         tty_option="-it"
     fi
 
-    docker exec $tty_option $user_option $CONTAINER_NAME "$@"
+    $CONTAINER_CMD exec $tty_option $user_option $CONTAINER_NAME "$@"
 }
 
 image_name() {
@@ -177,7 +199,11 @@ image_name() {
 }
 
 container_running() {
-    docker ps -q --filter name=$CONTAINER_NAME
+    if [ "$CONTAINER_CMD" = "container" ]; then
+        container ls -a | awk -v name="$CONTAINER_NAME" '$1 == name {print $1}'
+    else
+        docker ps -q --filter name=$CONTAINER_NAME
+    fi
 }
 
 cd_redmine_root() {
@@ -269,10 +295,20 @@ update() {
     echo ""
     echo "Updating redmined images..."
 
-    local images=$(docker images --format "{{.Repository}}:{{.Tag}}" $IMAGE | grep -v "<none>")
-    for image in $images; do
-        docker pull -q $image
-    done
+    if [ "$CONTAINER_CMD" = "container" ]; then
+        # Apple container CLI does not support --format, so use awk to extract repository:tag
+        local images=$(container images ls $IMAGE | awk 'NR>1 {print $1 ":" $2}' | grep -v "<none>")
+
+        for image in $images; do
+            container images pull $image
+        done
+    else
+        local images=$(docker images --format "{{.Repository}}:{{.Tag}}" $IMAGE | grep -v "<none>")
+
+        for image in $images; do
+            docker pull -q $image
+        done
+    fi
 
     exit 0
 }
@@ -305,7 +341,7 @@ main() {
             envs="env $CONTAINER_ENVS "
         fi
 
-        if [ ! $(container_running) ]; then
+        if [ -z "$(container_running)" ]; then
             docker_run $envs "$@"
         else
             docker_exec $envs "$@"

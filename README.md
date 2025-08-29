@@ -79,6 +79,7 @@ redmined bin/rails test:system
 
 ### Global settings
 
+* `REDMINED_USE_APPLE_CONTAINER` (Experimental) Use Apple container CLI. If not set, do not use Apple container CLI.
 * `REDMINED_CONTAINER_NAME` Container name for redmined. If not set, use "redmined-container" as default.
 * `REDMINED_MAP_HOST_USER_TO_CONTAINER_USER` Map the UID and GID of the host user to the container user
 * `REDMINED_BUNDLE_CACHE_VOLUME` Volume name for bundler cache. If not set, use "redmine-bundle-cache" as default.
@@ -87,7 +88,7 @@ redmined bin/rails test:system
 * `REDMINED_REDMINE_PORT` Port number for Redmine. If not set, use "3000" as default.
 * `REDMINED_CONTAINER_ENVS` Additional environment variables for redmined container. Multiple variables can be set by separating them with a space. If not set, use "" as default.
 * `REDMINED_PUBLISH_PORT` Port mapping for Redmine. If not set, use "3000:3000" as default.
-* `REDMINED_PLATFORM` Platform for the container image redmined uses.
+* `REDMINED_PLATFORM` Platform for the Redmine container image. If you're using Docker, use the format like 'linux/amd64' or 'linux/arm64.' Otherwise, if you're using the Apple container CLI, you can simply use 'amd64' or 'arm64.'.
 * `REDMINED_NO_TTY` Whether to run the container in non-TTY mode. If not set, disable non-TTY mode. No TTY mode is also enabled by `-T` opeion of redmined command.
 * `REDMINED_NETWORK` Network for the Docker container. If not set, use "" as default.
 
