@@ -69,11 +69,21 @@ redmined bin/rails test:system
 
 > [!TIP]
 > I recommend you define a short command, such as `r`, as an alias for `redmined` command.
+>
+> ```
+> $ r bundle
+> $ r bin/rails s
+> ```
 
 ## Supported Versions
 
 * **Redmine**: Tested with the latest `master` branch of [redmine/redmine](https://github.com/redmine/redmine)
 * **Ruby**: Supports Ruby 3.2, 3.3, 3.4
+
+## Supported OCI runtimes
+
+* Docker
+* [Apple container](https://github.com/apple/container) (Experimental)
 
 ## Settings
 
