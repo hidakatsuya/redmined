@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-export HOME=/home/$USER_NAME
+USER_HOME="/home/$USER_NAME"
 
 sudo chown -R $USER_NAME:$USER_NAME /bundle
 
@@ -9,7 +9,7 @@ if [ -n "$USER_ID" ] && [ -n "$GROUP_ID" ]; then
     usermod -u $USER_ID $USER_NAME > /dev/null
     groupmod -g $GROUP_ID $USER_NAME > /dev/null
 
-    exec setpriv --reuid=$USER_ID --regid=$GROUP_ID --init-groups "$@"
+    exec env HOME=$USER_HOME setpriv --reuid=$USER_ID --regid=$GROUP_ID --init-groups "$@"
 else
-    exec setpriv --reuid=$(id -u $USER_NAME) --regid=$(id -g $USER_NAME) --init-groups "$@"
+    exec env HOME=$USER_HOME setpriv --reuid=$(id -u $USER_NAME) --regid=$(id -g $USER_NAME) --init-groups "$@"
 fi
