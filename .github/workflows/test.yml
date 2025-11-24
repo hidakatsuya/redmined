@@ -16,6 +16,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      REDMINED_NO_TTY: 1
+      REDMINED_IMAGE: redmined:test
+      REDMINED_REDMINE_PORT: 3001
+      REDMINED_CONTAINER_ENVS: RAILS_ENV=test
+
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -32,22 +38,24 @@ jobs:
         with:
           repository: redmine/redmine
           ref: master
-          path: redmine-src
+          path: redmine1-src
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: redmine/redmine
+          ref: master
+          path: redmine2-src
 
       - name: Set up redmined
         run: |
           chmod +x redmined
           mkdir -p $HOME/.local/bin
           cp redmined $HOME/.local/bin
-
-          echo "REDMINED_IMAGE=redmined:test" >> $GITHUB_ENV
-          echo "REDMINED_REDMINE_PORT=3001" >> $GITHUB_ENV
         shell: bash
 
       - name: Set up Redmine
-        env:
-          REDMINED_CONTAINER_ENVS: RAILS_ENV=test
         run: |
+          cd $GITHUB_WORKSPACE/redmine1-src
           chmod a+w -R .
 
           cat <<EOS > config/database.yml
@@ -58,27 +66,35 @@ jobs:
 
           redmined bundle install
           redmined bin/rails db:prepare
-        shell: script -q -e -c "bash {0}"
-        working-directory: redmine-src
 
-      - name: Test
-        env:
-          REDMINED_CONTAINER_ENVS: RAILS_ENV=test
+          cd $GITHUB_WORKSPACE/redmine2-src
+          chmod a+w -R .
+
+          cat <<EOS > config/database.yml
+          test:
+            adapter: sqlite3
+            database: db/test.sqlite3
+          EOS
+
+          redmined bundle install
+          redmined bin/rails db:prepare
+
+      - name: Test of basic behaviors
+        working-directory: redmine1-src
         run: |
           docker volume ls
 
           redmined cat /etc/os-release
           redmined bin/about
 
-          redmined printenv | grep RAILS_ENV=test || exit 1
-          redmined printenv | grep PORT=3001 || exit 1
+          redmined printenv | grep RAILS_ENV=test
+          redmined printenv | grep PORT=3001
 
           redmined bin/rails test test/unit/news_test.rb
           redmined bin/rails test test/system/versions_test.rb
-        shell: script -q -e -c "bash {0}"
-        working-directory: redmine-src
 
-      - name: Test for the indivisual settings
+      - name: Test of the indivisual settings
+        working-directory: redmine1-src
         run: |
           cat <<EOS > .redmined.json
           {
@@ -100,11 +116,27 @@ jobs:
           EOS
 
           # Test against default
-          redmined printenv | grep DEFAULT_ENV=1 || exit 1
-          redmined printenv | grep PORT=4000 || exit 1
+          redmined printenv | grep DEFAULT_ENV=1
+          redmined printenv | grep PORT=4000
 
           # Test against other1
-          redmined -n other1 printenv | grep OTHER1_ENV=1 || exit 1
-          redmined -n other1 printenv | grep PORT=4001 || exit 1
-        shell: script -q -e -c "bash {0}"
-        working-directory: redmine-src
+          redmined -n other1 printenv | grep OTHER1_ENV=1
+          redmined -n other1 printenv | grep PORT=4001
+
+      - name: Test of multiple execution
+        run: |
+          cd $GITHUB_WORKSPACE/redmine1-src
+          redmined ruby -e "sleep 10" &
+
+          # Wait for container to start
+          for _ in $(seq 1 5); do
+            if docker ps --format '{{.Names}}' | grep -q "redmined-container-default"; then
+              break
+            fi
+            sleep 1
+          done
+
+          docker container ls
+
+          cd $GITHUB_WORKSPACE/redmine2-src
+          redmined echo "OK"
