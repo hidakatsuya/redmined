@@ -202,7 +202,7 @@ container_running() {
     if [ "$CONTAINER_CMD" = "container" ]; then
         container ls -a | awk -v name="$CONTAINER_NAME" '$1 == name {print $1}'
     else
-        docker ps -q --filter name=$CONTAINER_NAME
+        docker ps --format "{{.Names}}" | grep -Fxq "$CONTAINER_NAME"
     fi
 }
 
