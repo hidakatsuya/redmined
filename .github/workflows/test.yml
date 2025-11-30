@@ -58,11 +58,9 @@ jobs:
           cd $GITHUB_WORKSPACE/redmine1-src
           chmod a+w -R .
 
-          cat <<EOS > config/database.yml
-          test:
-            adapter: sqlite3
-            database: db/test.sqlite3
-          EOS
+          # Create a config/database.yml
+          redmined -d
+          test -f config/database.yml
 
           redmined bundle install
           redmined bin/rails db:prepare
