@@ -52,9 +52,8 @@ else
     readonly CONTAINER_CMD="docker"
 fi
 
-
-exit_with_usage() {
-    cat <<'EOS' 1>&2
+show_usage() {
+    cat <<'EOS'
 Usage: redmined [options] [command]
 
 Command:
@@ -122,6 +121,14 @@ Examples:
   ghcr.io/hidakatsuya/redmined:latest
   ghcr.io/hidakatsuya/redmined:ruby3.3
 EOS
+}
+
+exit_with_usage() {
+    if [ -t 1 ]; then
+        show_usage | "${PAGER:-less}"
+    else
+        show_usage
+    fi
     exit 0
 }
 
