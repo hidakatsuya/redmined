@@ -65,6 +65,7 @@ Options:
   -T       Run the commands in non-TTY mode
   -c       Print the contents of the configuration file
   -u       Update the redmined script itself and the redmined images to the latest version
+  -d       Create a SQLite database configuration file
 
 Examples:
   Run commands in the container.
@@ -277,7 +278,7 @@ print_configuration() {
     exit 0
 }
 
-update() {
+update_redmined_and_images() {
     local install_file_url=https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh
     local install_dir=$(dirname $(readlink -f $0))
 
@@ -313,6 +314,27 @@ update() {
     exit 0
 }
 
+create_sqlite_database_config() {
+    if [ -f "config/database.yml" ]; then
+        echo "config/database.yml already exists."
+        exit 0
+    fi
+
+    cat <<EOS > config/database.yml
+development:
+  adapter: sqlite3
+  database: db/development.sqlite3
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+production:
+  adapter: sqlite3
+  database: db/production.sqlite3
+EOS
+    echo "config/database.yml created."
+    exit 0
+}
+
 main() {
     if [ "$#" -eq 0 ]; then
         exit_with_usage
@@ -322,12 +344,13 @@ main() {
         cd_redmine_root
 
         local config_name=""
-        while getopts ":n:Tcu" opt; do
+        while getopts ":n:Tcud" opt; do
             case $opt in
                 n)    config_name=$OPTARG;;
                 T)    NO_TTY=1;;
                 c)    print_configuration;;
-                u)    update;;
+                u)    update_redmined_and_images;;
+                d)    create_sqlite_database_config;;
                 \?|:) exit_with_usage;;
             esac
         done

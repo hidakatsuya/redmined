@@ -36,17 +36,10 @@ curl -sSL https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh
 cd your-redmine-root-directory
 ```
 
-Create configuration for SQLite database.
+Create the SQLite database configuration by running the following command to generate a `config/database.yml`.
 
 ```shell
-cat <<EOS > config/database.yml
-development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-test:
-  adapter: sqlite3
-  database: db/test.sqlite3
-EOS
+redmined -d
 ```
 
 Setup and start Redmine.
