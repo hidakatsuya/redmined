@@ -57,9 +57,6 @@ redmined bin/rails test
 redmined bin/rails test:system
 ```
 
-> [!NOTE]
-> On ARM64 platforms Chromium and Chromedriver are installed automatically, so you can run `test:system` without extra setup.
-
 > [!TIP]
 > I recommend you define a short command, such as `r`, as an alias for `redmined` command.
 >
@@ -242,7 +239,6 @@ docker volume rm <the docker volume name>
 ## Redmind CLI
 
 ```
-$ redmined
 Usage: redmined [options] [command]
 
 Command:
@@ -253,6 +249,7 @@ Options:
   -T       Run the commands in non-TTY mode
   -c       Print the contents of the configuration file
   -u       Update the redmined script itself and the redmined images to the latest version
+  -d       Create a SQLite database configuration file
 
 Examples:
   Run commands in the container.
