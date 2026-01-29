@@ -68,7 +68,7 @@ redmined bin/rails test:system
 ## Supported Versions
 
 * **Redmine**: Tested with the latest `master` branch of [redmine/redmine](https://github.com/redmine/redmine)
-* **Ruby**: Supports Ruby 3.2, 3.3, 3.4
+* **Ruby**: Supports Ruby 3.2, 3.3, 3.4, 4.0
 
 ## Supported OCI runtimes
 
