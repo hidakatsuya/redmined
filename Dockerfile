@@ -3,6 +3,7 @@ ARG RUBY_VERSION=4.0
 FROM ruby:$RUBY_VERSION-slim-trixie
 
 ARG TARGETPLATFORM
+ARG PANDOC_VERSION=3.9.0.2
 
 RUN set -eux; \
     apt-get update && \
@@ -20,6 +21,19 @@ RUN set -eux; \
     libyaml-dev \
     libclang-dev && \
     rm -rf /var/lib/apt/lists/*
+
+# Install pandoc from the official GitHub Release .deb, following
+# https://github.com/jgm/pandoc/blob/main/INSTALL.md#linux.
+RUN set -eux; \
+    case "${TARGETPLATFORM:-linux/amd64}" in \
+      "linux/amd64") architecture="amd64" ;; \
+      "linux/arm64") architecture="arm64" ;; \
+      *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" >&2; exit 1 ;; \
+    esac; \
+    pandoc_package="pandoc-${PANDOC_VERSION}-1-${architecture}.deb"; \
+    curl -fL "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/${pandoc_package}" -o "/tmp/${pandoc_package}"; \
+    dpkg -i "/tmp/${pandoc_package}"; \
+    rm -f "/tmp/${pandoc_package}"
 
 # Install Node.js and yarn
 RUN set -eux; \
