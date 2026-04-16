@@ -15,6 +15,14 @@ jobs:
     strategy:
       matrix:
         include:
+          - ruby-version: "3.4"
+            dockerfile: Dockerfile.bookworm
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4"
+
+          - ruby-version: "3.4"
+            dockerfile: Dockerfile
+            tags: "ghcr.io/hidakatsuya/redmined:ruby3.4-trixie"
+
           - ruby-version: "4.0"
             dockerfile: Dockerfile.bookworm
             tags: "ghcr.io/hidakatsuya/redmined:ruby4.0,ghcr.io/hidakatsuya/redmined:latest"
