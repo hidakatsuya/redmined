@@ -2,13 +2,13 @@ ARG RUBY_VERSION=4.0
 
 FROM ruby:$RUBY_VERSION-slim-bookworm
 
-ARG TARGETPLATFORM
+ARG TARGETARCH
 ARG PANDOC_VERSION=3.9.0.2
 
 RUN set -eux; \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-    sudo build-essential curl wget vim \
+    sudo build-essential curl wget vim ripgrep \
     bzr git mercurial subversion cvs \
     fonts-dejavu-core fonts-dejavu-extra \
     ghostscript \
@@ -25,10 +25,10 @@ RUN set -eux; \
 # Install pandoc from the official GitHub Release .deb, following
 # https://github.com/jgm/pandoc/blob/main/INSTALL.md#linux.
 RUN set -eux; \
-    case "${TARGETPLATFORM:-linux/amd64}" in \
-      "linux/amd64") architecture="amd64" ;; \
-      "linux/arm64") architecture="arm64" ;; \
-      *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" >&2; exit 1 ;; \
+    case "${TARGETARCH:-amd64}" in \
+      "amd64") architecture="amd64" ;; \
+      "arm64") architecture="arm64" ;; \
+      *) echo "Unsupported TARGETARCH: ${TARGETARCH}" >&2; exit 1 ;; \
     esac; \
     pandoc_package="pandoc-${PANDOC_VERSION}-1-${architecture}.deb"; \
     curl -fL "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/${pandoc_package}" -o "/tmp/${pandoc_package}"; \
