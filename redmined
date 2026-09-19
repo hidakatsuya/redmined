@@ -304,11 +304,10 @@ update_redmined_and_images() {
     echo "Updating redmined images..."
 
     if [ "$CONTAINER_CMD" = "container" ]; then
-        # Apple container CLI does not support --format, so use awk to extract repository:tag
-        local images=$(container images ls $IMAGE | awk 'NR>1 {print $1 ":" $2}' | grep -v "<none>")
+        local images=$(container image ls -q | grep "^${IMAGE}:")
 
         for image in $images; do
-            container images pull $image
+            container image pull $image
         done
     else
         local images=$(docker images --format "{{.Repository}}:{{.Tag}}" $IMAGE | grep -v "<none>")
