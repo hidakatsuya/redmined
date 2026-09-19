@@ -36,10 +36,17 @@ curl -sSL https://raw.githubusercontent.com/hidakatsuya/redmined/main/install.sh
 cd your-redmine-root-directory
 ```
 
-Create the SQLite database configuration by running the following command to generate a `config/database.yml`.
+Create the SQLite database configuration by running the following command to generate `config/database.yml`.
 
 ```shell
 redmined -d
+```
+
+Configure `config/configuration.yml` to use the Noto Sans CJK font for image exports.
+
+```yaml
+default:
+  minimagick_font_path: /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
 ```
 
 Setup and start Redmine.

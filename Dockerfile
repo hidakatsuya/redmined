@@ -10,7 +10,7 @@ RUN set -eux; \
     apt-get install -y --no-install-recommends \
     sudo build-essential curl wget vim ripgrep \
     bzr git mercurial subversion cvs \
-    fonts-dejavu-core fonts-dejavu-extra \
+    fonts-dejavu-core fonts-dejavu-extra fonts-noto-cjk \
     ghostscript \
     gsfonts \
     imagemagick libmagick++-dev \
