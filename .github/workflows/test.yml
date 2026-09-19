@@ -62,6 +62,11 @@ jobs:
           redmined -d
           test -f config/database.yml
 
+          cat <<EOS > config/configuration.yml
+          default:
+            minimagick_font_path: /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
+          EOS
+
           redmined bundle install
           redmined bin/rails db:prepare
 
